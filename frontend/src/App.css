@@ -36,3 +36,173 @@
     transform: rotate(360deg);
   }
 }
+
+.container-fluid {
+  padding-left: 15%;
+  padding-right: 15%;
+}
+.inline-block {
+  display: inline-block;
+}
+.text-teal {
+  color: #1cc29f;
+}
+
+
+.text-white {
+  color: #fff;
+}
+
+
+.rounded {
+  border-radius: 5px;
+} 
+.bg-teal {
+  background-color: #1cc29f;
+}
+
+.shadow {
+  box-shadow: 0 2px 0 0 rgb(55 59 63 / 50%);
+}
+
+.bgImg{
+  background-image: url(./components/landingPage/BackgroundImage.png);
+}
+.hidden {
+  display: none;
+} 
+
+.text-charcoal {
+  color: #373b3f;
+}
+
+.text-red {
+  color: #a6002f;
+}
+
+.text-purple {
+  color: #8656cd;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.center-img {
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.items-center {
+
+  align-items: center;
+}
+.side-by-side li {
+  display: inline;
+}
+.sm-icon {
+  font-size: 2.75rem;
+  margin: 0 0.625rem;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+.free{
+  padding-top: 2rem;;
+}
+.landingpage-content{
+  padding-top: 3rem;
+}
+.dash-images{
+  width:60%;
+  
+}
+
+.opacity-40 {
+  opacity: 0.4;
+}
+
+.center-form{
+  padding-left: 20%;
+padding-top: 5%;
+}
+a:hover{
+color: inherit;
+} 
+  
+
+h2{
+  text-transform: uppercase;
+  font-size: 16px;
+  color: #999;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+
+.brand-image{
+   float: left;
+  margin-right: 30px;
+}
+
+.form-content, .img-class{
+  /* display: inline; */
+  float: left;
+  text-align: left;
+
+}
+
+input{
+
+  margin-bottom: 17px;
+  border: 1px solid #cccccc;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+body{
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif
+}
+:root {
+  --primary-color: #17a2b8;
+  --dark-color: #343a40;
+  --light-color: #f4f4f4;
+  --danger-color: #dc3545;
+  --success-color: #28a745;
+}
+
+.alert-danger {
+  background: var(--danger-color);
+  color: #fff;
+}
+.alert-dark {
+  background: var(--dark-color);
+  color: #fff;
+}
+
+.alert-light {
+  background: var(--light-color);
+  color: #333;
+}
+
+.alert-primary {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.alert {
+  padding: 0.5rem;
+  margin: 1rem 0;
+  opacity: 0.9;
+  /* background: var(--light-color); */
+  color: #333;
+}
