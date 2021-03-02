@@ -15,7 +15,7 @@ const Alert = ({ alerts }) =>
 
 Alert.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  alerts: PropTypes.arrayOf.isRequired,
+  alerts: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({

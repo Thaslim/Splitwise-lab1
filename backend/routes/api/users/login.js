@@ -7,17 +7,24 @@ const require = createRequire(import.meta.url);
 const { check, validationResult } = require('express-validator/');
 dotenv.config({ path: './config/.env' });
 export const router = express.Router();
+import auth from '../../../middleware/auth.js';
 import { splitwisedb } from '../../../config/database.js';
 
 // @route GET api/auth
 // @desc Test route
 // @access Public
-// router.get('/', auth, (req, res) => {
-//   res.send('Auth route');
-// });
+router.get('/', auth, async (req, res) => {
+  try {
+    const user = await splitwisedb.profileInfo(req.user.id);
+    res.json(user);
+  } catch (error) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 // @route POST api/auth
-// @desc Register user
+// @desc Authenticate user and get token
 // @access Public
 router.post(
   '/',

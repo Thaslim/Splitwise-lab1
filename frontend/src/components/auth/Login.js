@@ -1,21 +1,31 @@
+/* eslint-disable no-shadow */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { login } from '../../actions/auth';
 import splitwiselogo from '../landingPage/splitwise.svg';
 
-const Login = () => {
+const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const { email, password } = formData;
+  const { userEmail, userPassword } = formData;
   const onInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    // register({ name, email, password });
+    login({ userEmail, userPassword });
   };
+
+  // Redirect if logged in
+  if (isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
+
   return (
     <div className='container-fluid'>
       <div className='center-form'>
@@ -38,8 +48,8 @@ const Login = () => {
             <input
               className='form-control'
               type='email'
-              name='email'
-              value={email}
+              name='userEmail'
+              value={userEmail}
               onChange={onInputChange}
               id='user_email'
             />
@@ -48,8 +58,8 @@ const Login = () => {
             <input
               className='form-control'
               type='password'
-              name='password'
-              value={password}
+              name='userPassword'
+              value={userPassword}
               onChange={onInputChange}
               id='user_password'
             />
@@ -65,4 +75,16 @@ const Login = () => {
   );
 };
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
+};
+Login.defaultProps = {
+  isAuthenticated: false,
+};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { login })(Login);

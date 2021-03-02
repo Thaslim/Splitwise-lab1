@@ -2,14 +2,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-no-duplicate-props */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import splitwiselogo from '../landingPage/splitwise.svg';
 import setAlert from '../../actions/alert';
-import signup from '../../actions/auth';
+import { signup } from '../../actions/auth';
 
-const Signup = ({ setAlert, signup }) => {
+const Signup = ({ setAlert, signup, isAuthenticated }) => {
   const [visibility, setvisibility] = useState('hidden');
   const [maxHeight, setmaxHeight] = useState('0');
   const [formData, setFormData] = useState({
@@ -30,6 +30,12 @@ const Signup = ({ setAlert, signup }) => {
     e.preventDefault();
     signup({ userName, userEmail, userPassword });
   };
+
+  // Redirect if logged in
+  if (isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
+
   return (
     <div className='container-fluid'>
       <div className='center-form'>
@@ -102,11 +108,14 @@ const Signup = ({ setAlert, signup }) => {
 Signup.propTypes = {
   setAlert: PropTypes.func.isRequired,
   signup: PropTypes.func.isRequired,
-  // isAuthenticated: PropTypes.bool,
+  isAuthenticated: PropTypes.bool,
 };
 
-// const mapStateToProps = (state) => ({
-//   isAuthenticated: state.auth.isAuthenticated,
-// });
+Signup.defaultProps = {
+  isAuthenticated: false,
+};
 
-export default connect(null, { setAlert, signup })(Signup);
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+export default connect(mapStateToProps, { setAlert, signup })(Signup);
