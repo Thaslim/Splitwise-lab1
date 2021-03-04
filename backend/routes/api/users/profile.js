@@ -37,7 +37,7 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 5 },
   fileFilter: fileFilter,
 });
-// @route GET api/profile/me
+// @route GET api/me
 // @desc Get current user's profile
 // @access Private
 router.get('/me', auth, async (req, res) => {

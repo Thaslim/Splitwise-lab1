@@ -32,7 +32,7 @@ const Navbar = ({ isAuthenticated, loading, logout }) => {
         </Link>
 
         <div className={menuClass} aria-labelledby='navbarDropdown'>
-          <Link className='dropdown-item' to='/profile'>
+          <Link className='dropdown-item' to='/me'>
             Your account
           </Link>
           <Link className='dropdown-item' to='/new-group'>
