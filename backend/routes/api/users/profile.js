@@ -40,7 +40,7 @@ const upload = multer({
 // @route GET api/me
 // @desc Get current user's profile
 // @access Private
-router.get('/me', auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     let profile = await splitwisedb.profileInfo(req.user.id);
     if (!profile.length) {
@@ -56,7 +56,7 @@ router.get('/me', auth, async (req, res) => {
   // res.send('Profile route');
 });
 
-// @route POST api/profile/me
+// @route POST api/me
 // @desc Update profile information
 // @access Private
 

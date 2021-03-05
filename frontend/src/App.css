@@ -209,3 +209,49 @@ body {
   color: #333333;
   white-space: nowrap;
 }
+
+h1 {
+  font-size: 30px;
+  line-height: 36px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: inherit;
+  font-weight: bold;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+
+input[type='file'] {
+  line-height: 100%;
+}
+
+.edit-link {
+  font-weight: 400;
+  color: #0088cc;
+  text-decoration: none;
+}
+.edit-link:hover {
+  text-decoration: underline;
+}
+
+span {
+  display: block;
+  margin-bottom: 5px;
+}
+
+select {
+  width: 220px;
+  border: 1px solid #bbb;
+}
+.btn-orange {
+  background: #ff652f;
+  color: #fff;
+  text-shadow: 0 -1px 0 #c83400;
+}

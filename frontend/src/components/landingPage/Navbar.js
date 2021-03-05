@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
 import splitwiselogo from './splitwise.svg';
 
-const Navbar = ({ isAuthenticated, loading, logout }) => {
+// eslint-disable-next-line object-curly-newline
+const Navbar = ({ user, isAuthenticated, loading, logout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -28,7 +29,7 @@ const Navbar = ({ isAuthenticated, loading, logout }) => {
           aria-haspopup='true'
           aria-expanded='false'
         >
-          Dropdown
+          {user && user[0].userName}
         </Link>
 
         <div className={menuClass} aria-labelledby='navbarDropdown'>
@@ -97,14 +98,17 @@ Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
   loading: PropTypes.bool,
+  user: PropTypes.string,
 };
 Navbar.defaultProps = {
   isAuthenticated: false,
   loading: true,
+  user: null,
 };
 
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
+  user: state.auth.user,
   loading: state.auth.loading,
 });
 

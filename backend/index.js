@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 app.use(express.json({ extended: false }));
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
-app.use('/api/profile', profileRouter);
+app.use('/api/me', profileRouter);
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
