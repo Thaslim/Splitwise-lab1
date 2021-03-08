@@ -191,3 +191,50 @@ splitwisedb.getUserName = (userID) => {
     );
   });
 };
+
+splitwisedb.getGroupsList = (email) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT groupName, status, groupID FROM ExpenseGroups
+      INNER JOIN GroupMembers 
+      ON GroupMembers.groupID = ExpenseGroups.idGroups 
+      WHERE memberEmail = ?`,
+      [email],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getAllUsers = () => {
+  return new Promise((resolve, reject) => {
+    db.query(`SELECT userName, userEmail FROM User`, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
+};
+
+splitwisedb.getGroupExpense = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT groupPicture, groupName, description, amount, date, paidBy 
+    FROM ExpenseGroups INNER JOIN Expenses
+    ON ExpenseGroups.idGroups = Expenses.egID
+    WHERE ExpenseGroups.idGroups = ?`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};

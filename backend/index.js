@@ -10,6 +10,7 @@ import { router as loginRouter } from './routes/api/users/login.js';
 import { router as profileRouter } from './routes/api/users/profile.js';
 import { router as createGroupRouter } from './routes/api/groups/new-group.js';
 import { router as mygroupsRouter } from './routes/api/groups/my-groups.js';
+import { router as groupsRouter } from './routes/api/groups/groups.js';
 
 app.get('/', (req, res) => {
   res.send('API running');
@@ -21,7 +22,8 @@ app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/me', profileRouter);
 app.use('/api/new-group', createGroupRouter);
-app.use('api/my-groups', mygroupsRouter);
+app.use('/api/my-groups', mygroupsRouter);
+app.use('/api/groups', groupsRouter);
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {

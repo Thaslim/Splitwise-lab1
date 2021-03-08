@@ -40,6 +40,17 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+// @route GET api/new-groups
+// @desc Search registered Users
+// @access Private
+router.get('/', auth, async (req, res) => {
+  try {
+    const userList = await splitwisedb.getAllUsers();
+    res.json(userList);
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+});
 // @route POST api/new-groups
 // @desc Create new group
 // @access Private
@@ -52,7 +63,7 @@ router.post(
     [check('groupName', "First name can't be blank").not().isEmpty()],
   ],
   async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     let groupPicture;
 
     const { groupName: name, groupMembers: members } = req.body;
@@ -92,7 +103,7 @@ router.post(
         req.user.key,
         true
       );
-      if (members.length) {
+      if (members && members.length) {
         const insertMembers = await members.map(async (x) => {
           return await splitwisedb.addGroupMembers(
             currGroupID,

@@ -39,18 +39,24 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 5 },
   fileFilter: fileFilter,
 });
+
 // @route GET api/my-groups
 // @desc Get current user's groups
 // @access Private
 router.get('/', auth, async (req, res) => {
   try {
-    let profile = await splitwisedb.profileInfo(req.user.id);
-    if (!profile.length) {
-      return res
-        .status(400)
-        .json({ message: 'There is no profile for this user' });
+    let mygroupList = await splitwisedb.getGroupsList(req.user.key);
+
+    if (!mygroupList.length) {
+      return res.status(400).json({
+        errors: [
+          {
+            msg: `Whoops! You dont belong to any groups yet!`,
+          },
+        ],
+      });
     }
-    res.json(profile);
+    res.json(mygroupList);
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server error');
@@ -62,75 +68,75 @@ router.get('/', auth, async (req, res) => {
 // @desc Update profile information
 // @access Private
 
-router.post(
-  '/',
-  [
-    upload.single('selectedFile'),
-    auth,
-    [
-      check('userName', "First name can't be blank").not().isEmpty(),
-      check('userEmail', 'Enter a valid email').isEmail(),
-    ],
-  ],
-  async (req, res) => {
-    console.log(req.body);
-    let filepath;
+// router.post(
+//   '/',
+//   [
+//     upload.single('selectedFile'),
+//     auth,
+//     [
+//       check('userName', "First name can't be blank").not().isEmpty(),
+//       check('userEmail', 'Enter a valid email').isEmail(),
+//     ],
+//   ],
+//   async (req, res) => {
+//     console.log(req.body);
+//     let filepath;
 
-    const {
-      userName: name,
-      userEmail: email,
-      userPhone: phno,
-      userCurrency: currency,
-      userTimezone: TZ,
-      userLanguage: lang,
-      userPicture: pic,
-    } = req.body;
-    if (req.file) {
-      filepath = req.file.filename;
-    } else {
-      filepath = pic;
-    }
+//     const {
+//       userName: name,
+//       userEmail: email,
+//       userPhone: phno,
+//       userCurrency: currency,
+//       userTimezone: TZ,
+//       userLanguage: lang,
+//       userPicture: pic,
+//     } = req.body;
+//     if (req.file) {
+//       filepath = req.file.filename;
+//     } else {
+//       filepath = pic;
+//     }
 
-    const errors = validationResult(req);
-    let validPhone;
-    let userValidPhone;
-    if (phno) {
-      validPhone = phone(phno);
-      userValidPhone = validPhone[0];
-      if (!validPhone.length) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: `${phno} not a valid phone number` }] });
-      }
-    }
-    if (!validPhone) {
-      userValidPhone = '';
-    }
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+//     const errors = validationResult(req);
+//     let validPhone;
+//     let userValidPhone;
+//     if (phno) {
+//       validPhone = phone(phno);
+//       userValidPhone = validPhone[0];
+//       if (!validPhone.length) {
+//         return res
+//           .status(400)
+//           .json({ errors: [{ msg: `${phno} not a valid phone number` }] });
+//       }
+//     }
+//     if (!validPhone) {
+//       userValidPhone = '';
+//     }
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
 
-    try {
-      let user = await splitwisedb.getUserbyId(req.user.id);
+//     try {
+//       let user = await splitwisedb.getUserbyId(req.user.id);
 
-      if (user.length > 0) {
-        // console.log(JSON.stringify(user[0]));
-        let profile = await splitwisedb.updateProfile(
-          user[0].idUser,
-          name,
-          email,
-          userValidPhone,
-          currency,
-          TZ,
-          lang,
-          filepath
-        );
-        let updatedProfile = await splitwisedb.profileInfo(req.user.id);
-        return res.json(updatedProfile);
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server error');
-    }
-  }
-);
+//       if (user.length > 0) {
+//         // console.log(JSON.stringify(user[0]));
+//         let profile = await splitwisedb.updateProfile(
+//           user[0].idUser,
+//           name,
+//           email,
+//           userValidPhone,
+//           currency,
+//           TZ,
+//           lang,
+//           filepath
+//         );
+//         let updatedProfile = await splitwisedb.profileInfo(req.user.id);
+//         return res.json(updatedProfile);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).send('Server error');
+//     }
+//   }
+// );
