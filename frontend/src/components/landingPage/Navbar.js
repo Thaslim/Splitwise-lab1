@@ -39,6 +39,9 @@ const Navbar = ({ user, isAuthenticated, loading, logout }) => {
           <Link className='dropdown-item' to='/new-group'>
             Create a group
           </Link>
+          <Link className='dropdown-item' to='/my-groups'>
+            My groups
+          </Link>
           <Link onClick={logout} className='dropdown-item' to='/'>
             Log out
           </Link>
@@ -98,12 +101,12 @@ Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
   loading: PropTypes.bool,
-  user: PropTypes.string,
+  user: PropTypes.arrayOf(PropTypes.object),
 };
 Navbar.defaultProps = {
   isAuthenticated: false,
   loading: true,
-  user: null,
+  user: [],
 };
 
 const mapStateToProps = (state) => ({

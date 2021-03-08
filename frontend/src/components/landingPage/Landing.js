@@ -13,6 +13,7 @@ const Landing = ({ isAuthenticated }) => {
   if (isAuthenticated) {
     return <Redirect to='/dashboard' />;
   }
+
   const images = {
     planeImg,
     heartImg,

@@ -1,17 +1,20 @@
 import express from 'express';
 import phone from 'phone';
 import { createRequire } from 'module';
+import path from 'path';
 export const router = express.Router();
 import auth from '../../../middleware/auth.js';
 import { splitwisedb } from '../../../config/database.js';
+const __dirname = path.resolve(path.dirname(''));
+
 const require = createRequire(import.meta.url);
 const { check, validationResult } = require('express-validator/');
 import multer from 'multer';
-
+const destPath = __dirname + '/public/uploaded_images/users';
 const storage = multer.diskStorage({
-  destination: '../public/uploaded_images',
+  destination: destPath,
   filename: (req, file, cb) => {
-    cb(null, 'user_' + req.user.id + file.originalname);
+    cb(null, 'user_' + req.user.id + '_' + file.originalname);
   },
 });
 
@@ -63,51 +66,68 @@ router.get('/', auth, async (req, res) => {
 router.post(
   '/',
   [
+    upload.single('selectedFile'),
     auth,
-    [check('userName', "First name can't be blank").not().isEmpty()],
-    upload.single('userPicture'),
+    [
+      check('userName', "First name can't be blank").not().isEmpty(),
+      check('userEmail', 'Enter a valid email').isEmail(),
+    ],
   ],
   async (req, res) => {
-    // console.log(req.file);
-    const filepath = req.file.path;
+    console.log(req.body);
+    let filepath;
+
     const {
       userName: name,
+      userEmail: email,
       userPhone: phno,
       userCurrency: currency,
       userTimezone: TZ,
       userLanguage: lang,
+      userPicture: pic,
     } = req.body;
-    // console.log(req.body.userName);
-    const errors = validationResult(req.body.userName);
+    if (req.file) {
+      filepath = req.file.filename;
+    } else {
+      filepath = pic;
+    }
+
+    const errors = validationResult(req);
     let validPhone;
-    if (phno !== undefined) {
-      console.log(phno);
+    let userValidPhone;
+    if (phno) {
       validPhone = phone(phno);
+      userValidPhone = validPhone[0];
       if (!validPhone.length) {
         return res
           .status(400)
-          .json({ error: `${phno} not a valid phone number` });
+          .json({ errors: [{ msg: `${phno} not a valid phone number` }] });
       }
     }
-
+    if (!validPhone) {
+      userValidPhone = '';
+    }
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     try {
       let user = await splitwisedb.getUserbyId(req.user.id);
+
       if (user.length > 0) {
         // console.log(JSON.stringify(user[0]));
         let profile = await splitwisedb.updateProfile(
           user[0].idUser,
           name,
-          validPhone[0],
+          email,
+          userValidPhone,
           currency,
           TZ,
           lang,
           filepath
         );
-        return res.json(profile);
+        let updatedProfile = await splitwisedb.profileInfo(req.user.id);
+        return res.json(updatedProfile);
       }
     } catch (error) {
       console.error(error);

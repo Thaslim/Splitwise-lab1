@@ -64,7 +64,7 @@ export const signup = ({ userName, userEmail, userPassword }) => async (
 // Login User
 export const login = ({ userEmail, userPassword }) => async (dispatch) => {
   const config = {
-    headers: { 'Content-type': 'application/json' },
+    headers: { 'content-type': 'application/json' },
   };
   const body = JSON.stringify({ userEmail, userPassword });
   try {

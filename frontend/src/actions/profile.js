@@ -1,7 +1,12 @@
 import axios from 'axios';
 import setAlert from './alert';
 
-import { GET_USER_PROFILE, USER_PROFILE_ERROR } from './types';
+import {
+  GET_USER_PROFILE,
+  USER_PROFILE_ERROR,
+  UPDATE_PROFILE,
+  UPDATE_PROFILE_ERROR,
+} from './types';
 
 // Get current user profile
 export const getUserProfile = () => async (dispatch) => {
@@ -23,14 +28,14 @@ export const getUserProfile = () => async (dispatch) => {
 };
 
 // Update Profile
-export const updateUserProfile = (formData) => async (dispatch) => {
+export const updateUserProfile = (profileData) => async (dispatch) => {
   try {
     const config = {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'content-type': 'multipart/form-data' },
     };
-    const res = await axios.post('/api/me', formData, config);
+    const res = await axios.post('api/me', profileData, config);
     dispatch({
-      type: GET_USER_PROFILE,
+      type: UPDATE_PROFILE,
       payload: res.data,
     });
     dispatch(setAlert('Profile updated'));
@@ -41,7 +46,7 @@ export const updateUserProfile = (formData) => async (dispatch) => {
       errors.forEach((err) => dispatch(setAlert(err.msg, 'danger')));
     }
     dispatch({
-      type: USER_PROFILE_ERROR,
+      type: UPDATE_PROFILE_ERROR,
       payload: {
         msg: error.response.statusText,
         status: error.response.status,

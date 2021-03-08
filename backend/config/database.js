@@ -16,7 +16,7 @@ export let splitwisedb = {};
 splitwisedb.findUserEmail = (email) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT userPrimaryEmail FROM User WHERE userPrimaryEmail = ?`,
+      `SELECT userEmail FROM User WHERE userEmail = ?`,
       [email],
       (err, result) => {
         if (err) {
@@ -46,7 +46,7 @@ splitwisedb.findAdditionalEmail = (email) => {
 splitwisedb.insert = (name, email, password, avatar, defaultCurrency) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO User (userName, userPrimaryEmail, userPassword, userPicture, userCurrency) VALUES (?,?,?,?,?)`,
+      `INSERT INTO User (userName, userEmail, userPassword, userPicture, userCurrency) VALUES (?,?,?,?,?)`,
       [name, email, password, avatar, defaultCurrency],
       (err, result) => {
         if (err) {
@@ -61,7 +61,7 @@ splitwisedb.insert = (name, email, password, avatar, defaultCurrency) => {
 splitwisedb.profileInfo = (idUser) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT userName, userPrimaryEmail, userPhone, userPicture, userTimezone, userLanguage, userCurrency FROM User WHERE idUser = ?`,
+      `SELECT userName, userEmail, userPhone, userPicture, userTimezone, userLanguage, userCurrency FROM User WHERE idUser = ?`,
       [idUser],
       (err, result) => {
         if (err) {
@@ -77,7 +77,7 @@ splitwisedb.getUserbyEmail = (email) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT idUser, userPassword FROM User 
-      WHERE userPrimaryEmail = ?`,
+      WHERE userEmail = ?`,
       [email],
       (err, result) => {
         if (err) {
@@ -105,11 +105,21 @@ splitwisedb.getUserbyId = (uId) => {
   });
 };
 
-splitwisedb.insertAdditionalEmail = (email, uid) => {
+splitwisedb.updateProfile = (
+  uId,
+  name,
+  email,
+  phno,
+  currency,
+  TZ,
+  lang,
+  filepath
+) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO Emails (userEmail, uId) VALUES (?,?)`,
-      [email, uid],
+      `UPDATE User SET userName = ?, userEmail = ?,userPhone = ?, userCurrency = ?, userTimezone = ?,
+       userLanguage = ?, userPicture= ? WHERE idUser=?`,
+      [name, email, phno, currency, TZ, lang, filepath, uId],
       (err, result) => {
         if (err) {
           return reject(err);
@@ -120,12 +130,58 @@ splitwisedb.insertAdditionalEmail = (email, uid) => {
   });
 };
 
-splitwisedb.updateProfile = (uId, name, phno, currency, TZ, lang, filepath) => {
+splitwisedb.insertGroup = (name, groupPicture, userID) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `UPDATE User SET userName = ?, userPhone = ?, userCurrency = ?, userTimezone = ?,
-       userLanguage = ?, userPicture= ? WHERE idUser=?`,
-      [name, phno, currency, TZ, lang, filepath, uId],
+      `INSERT INTO ExpenseGroups (groupName, groupPicture, createdBy) VALUES (?,?,?)`,
+      [name, groupPicture, userID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.checkGroupName = (name, userID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM ExpenseGroups 
+      WHERE createdBy = ? AND groupName = ?`,
+      [userID, name],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.addGroupMembers = (groupID, name, email, status) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `INSERT INTO GroupMembers (groupID, memberName, memberEmail, status) VALUES (?,?,?,?)`,
+      [groupID, name, email, status],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getUserName = (userID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT userName FROM User 
+      WHERE idUser = ?`,
+      [userID],
       (err, result) => {
         if (err) {
           return reject(err);

@@ -38,7 +38,7 @@ router.post(
 
     let userCurr;
     if (!req.body.userCurrency) {
-      userCurr = 'USD ($)';
+      userCurr = 'USD';
     } else {
       userCurr = req.body.userCurrency;
     }
@@ -46,10 +46,9 @@ router.post(
     // console.log(name, email, password);
 
     try {
-      if (
-        (await splitwisedb.findUserEmail(email).length) > 0 ||
-        (await splitwisedb.findAdditionalEmail(email).length) > 0
-      ) {
+      const findUser = await splitwisedb.findUserEmail(email);
+
+      if (findUser.length > 0) {
         return res.status(400).json({
           errors: [{ msg: `${email} already belongs to another account.` }],
         });
@@ -83,7 +82,7 @@ router.post(
             id: inserted.insertId,
           },
         };
-
+        //Return jsonwebtoken
         jwt.sign(
           payload,
           process.env.SECRET,
@@ -93,17 +92,9 @@ router.post(
             res.json({ token });
           }
         );
-        // res.send('User registered');
       }
-
-      // } catch (error) {
-      //   console.error(error.msg);
-      //   res.status(500).send('Server error');
-      // }
-
-      //Return jsonwebtoken
     } catch (error) {
-      console.error(error.message);
+      // console.error(error.message);
       res.status(500).send('Server error');
     }
   }

@@ -10,8 +10,8 @@ export const router = express.Router();
 import auth from '../../../middleware/auth.js';
 import { splitwisedb } from '../../../config/database.js';
 
-// @route GET api/auth
-// @desc Test route
+// @route GET api/login
+// @desc login page
 // @access Public
 router.get('/', auth, async (req, res) => {
   try {
@@ -23,7 +23,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route POST api/auth
+// @route POST api/login
 // @desc Authenticate user and get token
 // @access Public
 router.post(
@@ -46,18 +46,13 @@ router.post(
       let results = await splitwisedb.getUserbyEmail(email);
       // console.log(JSON.stringify(results));
       if (!results.length) {
-        let emailResults = await splitwisedb.findAdditionalEmail(email);
-        if (!emailResults.length) {
-          return res.status(400).json({
-            errors: [
-              {
-                msg: `Whoops! We couldn’t find an account for that email address and password`,
-              },
-            ],
-          });
-        } else {
-          results = await splitwisedb.getUserbyId(emailResults[0].uId);
-        }
+        return res.status(400).json({
+          errors: [
+            {
+              msg: `Whoops! We couldn’t find an account for that email address and password`,
+            },
+          ],
+        });
       }
 
       //Compare password

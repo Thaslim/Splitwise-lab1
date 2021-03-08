@@ -65,7 +65,7 @@ const Signup = ({ setAlert, signup, isAuthenticated }) => {
               onKeyUp={secondaryFields}
               type='text'
               value={userName}
-              onChange={onInputChange}
+              onChange={(e) => onInputChange(e)}
               name='userName'
               id='user_name'
             />
@@ -78,7 +78,7 @@ const Signup = ({ setAlert, signup, isAuthenticated }) => {
                 type='email'
                 name='userEmail'
                 value={userEmail}
-                onChange={onInputChange}
+                onChange={(e) => onInputChange(e)}
                 id='user_email'
               />
               And here’s my <strong>password</strong>:
@@ -88,7 +88,7 @@ const Signup = ({ setAlert, signup, isAuthenticated }) => {
                 type='password'
                 name='userPassword'
                 value={userPassword}
-                onChange={onInputChange}
+                onChange={(e) => onInputChange(e)}
                 id='user_password'
               />
             </div>
