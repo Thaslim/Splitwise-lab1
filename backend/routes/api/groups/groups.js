@@ -1,11 +1,8 @@
 import express from 'express';
-import { createRequire } from 'module';
-import path from 'path';
 export const router = express.Router();
 import auth from '../../../middleware/auth.js';
 import { splitwisedb } from '../../../config/database.js';
-const __dirname = path.resolve(path.dirname(''));
-
+import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { check, validationResult } = require('express-validator/');
 
@@ -14,7 +11,7 @@ const { check, validationResult } = require('express-validator/');
 // @access Private
 router.get('/group/:group_id', auth, async (req, res) => {
   try {
-    let groupExpense = await splitwisedb.getGroupExpense(req.params.group_id);
+    const groupExpense = await splitwisedb.getGroupExpense(req.params.group_id);
 
     if (!groupExpense.length) {
       return res.status(400).json({
@@ -25,10 +22,65 @@ router.get('/group/:group_id', auth, async (req, res) => {
         ],
       });
     }
-    res.json(groupExpense);
+    const memberBalance = await splitwisedb.getAcceptedMembers(
+      req.params.group_id
+    );
+    res.json({
+      groups: [
+        { groupExpense: groupExpense },
+        { memberBalance: memberBalance },
+      ],
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server error');
   }
-  // res.send('Profile route');
 });
+
+// @route POST api/groups/:group_id
+// @desc Update profile information
+// @access Private
+
+router.post(
+  '/',
+  [
+    auth,
+    [
+      check('description', "Description can't be blank").not().isEmpty(),
+      check('amount', 'Enter a valid amount').isDecimal(),
+    ],
+  ],
+  async (req, res) => {
+    console.log(req.body);
+
+    const { description: desc, amount: amont } = req.body;
+    const paidBy = req.user.id;
+    const group_id = req.params.group_id;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const expenseAdded = await splitwisedb.addExpenseToGroup(
+        desc,
+        amount,
+        paidBy,
+        group_id
+      );
+      if (expenseAdded) {
+        const splitAmongGroups = await splitwisedb.splitWithMembers(group_id);
+        if (splitAmongGroups) {
+          res.status(200).json({
+            message: 'Expense added and splitted among groups',
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+  }
+);

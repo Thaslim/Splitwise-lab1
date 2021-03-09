@@ -61,82 +61,75 @@ router.get('/', auth, async (req, res) => {
     console.error(error.message);
     res.status(500).send('Server error');
   }
-  // res.send('Profile route');
 });
 
-// @route POST api/me
-// @desc Update profile information
+// @route GET api/my-groups/get-group/:group_id
+// @desc Get current user's groups
+// @access Private
+router.get('/get-group/:group_id', auth, async (req, res) => {
+  try {
+    let mygroupList = await splitwisedb.getGroupInfo(req.params.group_id);
+
+    if (!mygroupList.length) {
+      return res.status(400).json({
+        errors: [
+          {
+            msg: `Whoops! No group with the given ID!`,
+          },
+        ],
+      });
+    }
+    res.json(mygroupList);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route POST api/my-groups/update-group/:group_id
+// @desc Update group information
 // @access Private
 
-// router.post(
-//   '/',
-//   [
-//     upload.single('selectedFile'),
-//     auth,
-//     [
-//       check('userName', "First name can't be blank").not().isEmpty(),
-//       check('userEmail', 'Enter a valid email').isEmail(),
-//     ],
-//   ],
-//   async (req, res) => {
-//     console.log(req.body);
-//     let filepath;
+router.post(
+  '/update-group/:group_id',
+  [
+    upload.single('selectedFile'),
+    auth,
+    [check('groupName', "First name can't be blank").not().isEmpty()],
+  ],
+  async (req, res) => {
+    console.log(req.body);
+    let filepath;
+    const userID = req.user.id;
 
-//     const {
-//       userName: name,
-//       userEmail: email,
-//       userPhone: phno,
-//       userCurrency: currency,
-//       userTimezone: TZ,
-//       userLanguage: lang,
-//       userPicture: pic,
-//     } = req.body;
-//     if (req.file) {
-//       filepath = req.file.filename;
-//     } else {
-//       filepath = pic;
-//     }
+    const { groupName: name, groupMembers: members } = req.body;
+    if (req.file) {
+      filepath = req.file.filename;
+    }
 
-//     const errors = validationResult(req);
-//     let validPhone;
-//     let userValidPhone;
-//     if (phno) {
-//       validPhone = phone(phno);
-//       userValidPhone = validPhone[0];
-//       if (!validPhone.length) {
-//         return res
-//           .status(400)
-//           .json({ errors: [{ msg: `${phno} not a valid phone number` }] });
-//       }
-//     }
-//     if (!validPhone) {
-//       userValidPhone = '';
-//     }
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+    const errors = validationResult(req);
 
-//     try {
-//       let user = await splitwisedb.getUserbyId(req.user.id);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-//       if (user.length > 0) {
-//         // console.log(JSON.stringify(user[0]));
-//         let profile = await splitwisedb.updateProfile(
-//           user[0].idUser,
-//           name,
-//           email,
-//           userValidPhone,
-//           currency,
-//           TZ,
-//           lang,
-//           filepath
-//         );
-//         let updatedProfile = await splitwisedb.profileInfo(req.user.id);
-//         return res.json(updatedProfile);
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Server error');
-//     }
-//   }
-// );
+    try {
+      let checkUniqueGroupName = await splitwisedb.checkGroupName(name, userID);
+      if (checkUniqueGroupName.length > 0) {
+        return res.status(400).json({
+          errors: [
+            {
+              msg: `Whoops! ${name} group already exists`,
+            },
+          ],
+        });
+      }
+      let updatedGroup = await splitwisedb.updateGroup(req.params.group_id);
+
+      return res.json(updatedGroup);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+  }
+);

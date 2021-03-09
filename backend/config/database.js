@@ -238,3 +238,53 @@ splitwisedb.getGroupExpense = (groupID) => {
     );
   });
 };
+
+splitwisedb.getAcceptedMembers = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT memberName, memberEmail, memberBalance, isSettled 
+      FROM GroupMembers INNER JOIN ExpenseGroups
+      ON ExpenseGroups.idGroups = GroupMembers.groupID
+      WHERE GroupMembers.groupID = ? AND status = 1 ;`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getGroupInfo = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT groupName, groupPicture, memberName, memberEmail FROM GroupMembers
+      WHERE groupID = ? AND status = 1`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.updateGroup = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `UPDATE ExpenseGroups SET groupName = ?, groupPicture =?
+      WHERE groupID = ?`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};

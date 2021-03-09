@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -50,7 +50,7 @@ const Login = ({ login, isAuthenticated }) => {
               type='email'
               name='userEmail'
               value={userEmail}
-              onChange={(e) => onInputChange(e)}
+              onChange={onInputChange}
               id='user_email'
             />
             Password
@@ -60,7 +60,7 @@ const Login = ({ login, isAuthenticated }) => {
               type='password'
               name='userPassword'
               value={userPassword}
-              onChange={(e) => onInputChange(e)}
+              onChange={onInputChange}
               id='user_password'
             />
             <input

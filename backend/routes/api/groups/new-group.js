@@ -51,6 +51,7 @@ router.get('/', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
 // @route POST api/new-groups
 // @desc Create new group
 // @access Private
@@ -58,19 +59,19 @@ router.get('/', auth, async (req, res) => {
 router.post(
   '/',
   [
-    upload.single('selectedFile'),
+    // upload.single('selectedFile'),
     auth,
-    [check('groupName', "First name can't be blank").not().isEmpty()],
+    [check('groupName', "group Name can't be blank").not().isEmpty()],
   ],
   async (req, res) => {
-    // console.log(req.body);
+    console.log(req.body);
     let groupPicture;
 
     const { groupName: name, groupMembers: members } = req.body;
     if (req.file) {
       groupPicture = req.file.filename;
     } else {
-      groupPicture = 'splitwiseLogo.jpg';
+      groupPicture = '';
     }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

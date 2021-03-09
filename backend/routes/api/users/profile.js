@@ -14,7 +14,7 @@ const destPath = __dirname + '/public/uploaded_images/users';
 const storage = multer.diskStorage({
   destination: destPath,
   filename: (req, file, cb) => {
-    cb(null, 'user_' + req.user.id + '_' + file.originalname);
+    cb(null, 'user_' + file.originalname);
   },
 });
 
@@ -74,7 +74,7 @@ router.post(
     ],
   ],
   async (req, res) => {
-    console.log(req.body);
+    console.log(req);
     let filepath;
 
     const {

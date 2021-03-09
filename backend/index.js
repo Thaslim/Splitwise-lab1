@@ -25,7 +25,7 @@ app.use('/api/new-group', createGroupRouter);
 app.use('/api/my-groups', mygroupsRouter);
 app.use('/api/groups', groupsRouter);
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8000;
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`running on port ${port}`);

@@ -6,10 +6,10 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import splitwiselogo from '../landingPage/splitwise.svg';
-import setAlert from '../../actions/alert';
+
 import { signup } from '../../actions/auth';
 
-const Signup = ({ setAlert, signup, isAuthenticated }) => {
+const Signup = ({ signup, isAuthenticated }) => {
   const [visibility, setvisibility] = useState('hidden');
   const [maxHeight, setmaxHeight] = useState('0');
   const [formData, setFormData] = useState({
@@ -106,7 +106,6 @@ const Signup = ({ setAlert, signup, isAuthenticated }) => {
 };
 
 Signup.propTypes = {
-  setAlert: PropTypes.func.isRequired,
   signup: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool,
 };
@@ -118,4 +117,4 @@ Signup.defaultProps = {
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, { setAlert, signup })(Signup);
+export default connect(mapStateToProps, { signup })(Signup);
