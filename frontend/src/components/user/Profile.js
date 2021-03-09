@@ -30,31 +30,27 @@ const Profile = ({
   const [filePath, setFilePath] = useState('');
 
   useEffect(() => {
-    getUserProfile();
-    setUserName(loading || !profile[0].userName ? '' : profile[0].userName);
-    setUserPhone(loading || !profile[0].userPhone ? '' : profile[0].userPhone);
-    setUserCurrency(
-      loading || !profile[0].userCurrency ? '' : profile[0].userCurrency
-    );
-    setUserTimezone(
-      loading || !profile[0].userTimezone ? '' : profile[0].userTimezone
-    );
-    setUserLanguage(
-      loading || !profile[0].userLanguage ? '' : profile[0].userLanguage
-    );
-    setUserEmail(loading || !profile[0].userEmail ? '' : profile[0].userEmail);
-    setUserPicture(
-      loading || !profile[0].userPicture ? '' : profile[0].userPicture
-    );
-    setFilePath(
-      loading || !profile[0].userPicture
-        ? ''
-        : path.join('/static/uploaded_images/users', profile[0].userPicture)
-    );
-  }, [loading, getUserProfile]);
+    if (!profile) {
+      getUserProfile();
+    }
+    if (!loading && profile) {
+      setUserName(!profile[0].userName ? '' : profile[0].userName);
+      setUserPhone(!profile[0].userPhone ? '' : profile[0].userPhone);
+      setUserCurrency(!profile[0].userCurrency ? '' : profile[0].userCurrency);
+      setUserTimezone(!profile[0].userTimezone ? '' : profile[0].userTimezone);
+      setUserLanguage(!profile[0].userLanguage ? '' : profile[0].userLanguage);
+      setUserEmail(!profile[0].userEmail ? '' : profile[0].userEmail);
+      setUserPicture(!profile[0].userPicture ? '' : profile[0].userPicture);
+      setFilePath(
+        path.join('/static/uploaded_images/users', profile[0].userPicture)
+      );
+    }
+  }, [getUserProfile, loading, profile]);
 
   const onSubmit = async (e) => {
+    e.preventDefault();
     const profileData = new FormData();
+
     profileData.append('userName', userName);
     profileData.append('userEmail', userEmail);
     profileData.append('userTimezone', userTimezone);
@@ -63,11 +59,10 @@ const Profile = ({
     profileData.append('userPhone', userPhone);
     profileData.append('userPicture', userPicture);
     profileData.append('selectedFile', selectedFile);
-    e.preventDefault();
 
     updateUserProfile(profileData);
     // eslint-disable-next-line react/jsx-indent
-    <Redirect to='/dashboard' />;
+    // <Redirect to='/dashboard' />;
   };
 
   return loading && profile === null ? (
