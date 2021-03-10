@@ -272,3 +272,55 @@ select {
   top: 225px;
   /* left: 20px; */
 }
+
+/* width: 180px;
+  z-index: 3;
+  float: left;
+
+  text-align: left;
+  width: 172px;
+  margin-left: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+} */
+.open {
+  border-left: 6px solid #5bc5a7;
+  color: #5bc5a7;
+  font-weight: bold;
+  text-decoration: none;
+  padding-left: 3px;
+}
+
+.left_sidebar {
+  display: block;
+  color: #999;
+  text-decoration: none;
+  padding-left: 4px;
+}
+.header {
+  position: relative;
+  margin-left: 5px;
+  background: #f6f6f6;
+  color: #ccc;
+  font-size: 11px;
+  margin-top: 5px;
+  border-top: 1px solid #f3f3f3;
+  border-bottom: 1px solid #eee;
+  text-transform: uppercase;
+  padding: 0 5px;
+  width: 150px;
+}
+.hlink {
+  position: absolute;
+  top: 0;
+  padding-left: 40px;
+  display: inline;
+  font-size: inherit;
+  text-transform: lowercase;
+}
+.dashboard .header {
+  padding: 0;
+  height: 64px;
+  border-bottom: none;
+}
