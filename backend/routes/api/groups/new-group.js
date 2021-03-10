@@ -59,20 +59,19 @@ router.get('/', auth, async (req, res) => {
 router.post(
   '/',
   [
-    // upload.single('selectedFile'),
+    upload.single('selectedFile'),
     auth,
-    [check('groupName', "group Name can't be blank").not().isEmpty()],
+    [check('groupName', "group name can't be blank").not().isEmpty()],
   ],
   async (req, res) => {
-    console.log(req.body);
     let groupPicture;
-
     const { groupName: name, groupMembers: members } = req.body;
     if (req.file) {
       groupPicture = req.file.filename;
     } else {
       groupPicture = '';
     }
+    console.log(members);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -102,22 +101,23 @@ router.post(
         currGroupID,
         currUserName[0].userName,
         req.user.key,
-        true
+        1,
+        0
       );
-      if (members && members.length) {
-        const insertMembers = await members.map(async (x) => {
+      const objArray = JSON.parse(members);
+      if (objArray && objArray.length) {
+        const insertMembers = objArray.map(async (x) => {
           return await splitwisedb.addGroupMembers(
             currGroupID,
             x.memberName,
             x.memberEmail,
-            x.status
+            0,
+            0
           );
         });
       }
 
-      res
-        .status(200)
-        .json({ message: 'Successfully created group!', groupID: currGroupID });
+      res.status(200).json({ message: 'Successfully created group!' });
     } catch (error) {
       console.error(error);
       res.status(500).send('Server error');

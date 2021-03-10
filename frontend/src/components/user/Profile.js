@@ -6,9 +6,10 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import path from 'path';
-import { Link, Redirect } from 'react-router-dom';
-import { getUserProfile, updateUserProfile } from '../../actions/profile';
+import { useHistory } from 'react-router-dom';
 
+import { getUserProfile, updateUserProfile } from '../../actions/profile';
+import defaultProfilePic from './profile-pic.png';
 import Spinner from '../landingPage/Spinner';
 
 const Profile = ({
@@ -29,6 +30,8 @@ const Profile = ({
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePath, setFilePath] = useState('');
 
+  const history = useHistory();
+
   useEffect(() => {
     if (!profile) {
       getUserProfile();
@@ -41,9 +44,11 @@ const Profile = ({
       setUserLanguage(!profile[0].userLanguage ? '' : profile[0].userLanguage);
       setUserEmail(!profile[0].userEmail ? '' : profile[0].userEmail);
       setUserPicture(!profile[0].userPicture ? '' : profile[0].userPicture);
-      setFilePath(
-        path.join('/static/uploaded_images/users', profile[0].userPicture)
-      );
+      if (profile[0].userPicture) {
+        setFilePath(
+          path.join('/static/uploaded_images/users', profile[0].userPicture)
+        );
+      }
     }
   }, [getUserProfile, loading, profile]);
 
@@ -60,7 +65,7 @@ const Profile = ({
     profileData.append('userPicture', userPicture);
     profileData.append('selectedFile', selectedFile);
 
-    updateUserProfile(profileData);
+    updateUserProfile(profileData, history);
     // eslint-disable-next-line react/jsx-indent
     // <Redirect to='/dashboard' />;
   };
@@ -80,10 +85,9 @@ const Profile = ({
                   className='picture-frame'
                   src={
                     // eslint-disable-next-line operator-linebreak
-                    profile &&
-                    (profile[0].userPicture.startsWith('user')
+                    profile && profile[0].userPicture
                       ? filePath
-                      : profile[0].userPicture)
+                      : defaultProfilePic
                   }
                   style={{ width: '200px', height: '200px' }}
                   alt='userPicture'

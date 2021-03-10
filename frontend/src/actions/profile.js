@@ -28,7 +28,7 @@ export const getUserProfile = () => async (dispatch) => {
 };
 
 // Update Profile
-export const updateUserProfile = (profileData) => async (dispatch) => {
+export const updateUserProfile = (profileData, history) => async (dispatch) => {
   try {
     const config = {
       headers: { 'content-type': 'multipart/form-data' },
@@ -38,7 +38,10 @@ export const updateUserProfile = (profileData) => async (dispatch) => {
       type: UPDATE_PROFILE,
       payload: res.data,
     });
-    dispatch(setAlert('Profile updated'));
+    dispatch(setAlert('Profile updated', 'success'));
+    setTimeout(() => {
+      history.push('/dashboard');
+    }, 1000);
   } catch (error) {
     const { errors } = error.response.data;
 

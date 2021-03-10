@@ -28,26 +28,26 @@ splitwisedb.findUserEmail = (email) => {
   });
 };
 
-splitwisedb.findAdditionalEmail = (email) => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      `SELECT * FROM Emails WHERE userEmail = ?`,
-      [email],
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
-      }
-    );
-  });
-};
+// splitwisedb.findAdditionalEmail = (email) => {
+//   return new Promise((resolve, reject) => {
+//     db.query(
+//       `SELECT * FROM Emails WHERE userEmail = ?`,
+//       [email],
+//       (err, result) => {
+//         if (err) {
+//           return reject(err);
+//         }
+//         return resolve(result);
+//       }
+//     );
+//   });
+// };
 
-splitwisedb.insert = (name, email, password, avatar, defaultCurrency) => {
+splitwisedb.insert = (name, email, password, defaultCurrency) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO User (userName, userEmail, userPassword, userPicture, userCurrency) VALUES (?,?,?,?,?)`,
-      [name, email, password, avatar, defaultCurrency],
+      `INSERT INTO User (userName, userEmail, userPassword, userCurrency) VALUES (?,?,?,?)`,
+      [name, email, password, defaultCurrency],
       (err, result) => {
         if (err) {
           return reject(err);
@@ -161,11 +161,11 @@ splitwisedb.checkGroupName = (name, userID) => {
   });
 };
 
-splitwisedb.addGroupMembers = (groupID, name, email, status) => {
+splitwisedb.addGroupMembers = (groupID, name, email, status, settled) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO GroupMembers (groupID, memberName, memberEmail, status) VALUES (?,?,?,?)`,
-      [groupID, name, email, status],
+      `INSERT INTO GroupMembers (groupID, memberName, memberEmail, status, isSettled) VALUES (?,?,?,?,?)`,
+      [groupID, name, email, status, settled],
       (err, result) => {
         if (err) {
           return reject(err);
@@ -212,12 +212,15 @@ splitwisedb.getGroupsList = (email) => {
 
 splitwisedb.getAllUsers = () => {
   return new Promise((resolve, reject) => {
-    db.query(`SELECT userName, userEmail FROM User`, (err, result) => {
-      if (err) {
-        return reject(err);
+    db.query(
+      `SELECT userPicture, userName, userEmail FROM User`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
       }
-      return resolve(result);
-    });
+    );
   });
 };
 

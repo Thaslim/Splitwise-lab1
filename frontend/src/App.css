@@ -261,3 +261,14 @@ select {
   border-radius: 13px;
   margin-right: 2px;
 }
+.relative {
+  display: inline;
+  position: relative;
+  width: 250px;
+  height: 250px;
+}
+.groupImage {
+  position: absolute;
+  top: 225px;
+  /* left: 20px; */
+}

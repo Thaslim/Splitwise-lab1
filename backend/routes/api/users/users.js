@@ -54,12 +54,12 @@ router.post(
         });
       }
 
-      //Get user's gravatar
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm',
-      });
+      // //Get user's gravatar
+      // const avatar = gravatar.url(email, {
+      //   s: '200',
+      //   r: 'pg',
+      //   d: 'mm',
+      // });
 
       //Encrypt password
 
@@ -71,7 +71,6 @@ router.post(
         name,
         email,
         passwordEncrypted,
-        avatar,
         userCurr
       );
       // console.log(inserted.insertId);

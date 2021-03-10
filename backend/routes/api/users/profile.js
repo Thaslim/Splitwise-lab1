@@ -74,7 +74,6 @@ router.post(
     ],
   ],
   async (req, res) => {
-    console.log(req);
     let filepath;
 
     const {
@@ -130,7 +129,6 @@ router.post(
         return res.json(updatedProfile);
       }
     } catch (error) {
-      console.error(error);
       res.status(500).send('Server error');
     }
   }
