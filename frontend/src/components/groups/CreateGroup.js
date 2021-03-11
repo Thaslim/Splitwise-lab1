@@ -1,18 +1,22 @@
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable operator-linebreak */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable comma-dangle */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-shadow */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-no-duplicate-props */
+
 import React, { useState, useEffect } from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import path from 'path';
 import { connect } from 'react-redux';
 import PropTypes, { object } from 'prop-types';
 import splitwiselogo from '../landingPage/splitwise.svg';
-import MemberInputs from './MemberInputs';
+
 import { getAllUsers, createNewGroup } from '../../actions/group';
-import profilePic from '../user/profile-pic.png';
+
+import FreeSolo from './AutocompleteInput';
 
 const CreateGroup = ({
   createNewGroup,
@@ -25,11 +29,9 @@ const CreateGroup = ({
   const [groupName, setGroupName] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [filePath, setFilePath] = useState('');
-  const [nameSuggestions, setNameSuggestions] = useState([]);
-  const [text, setText] = useState('');
-  const [email, setEmail] = useState('');
-  const [pic, setPic] = useState('');
-
+  const blankMember = { memberName: '', memberEmail: '', memberPicture: '' };
+  // eslint-disable-next-line prefer-const
+  let [groupMembers, setGroupMembers] = useState([{ ...blankMember }]);
   const history = useHistory();
   useEffect(() => {
     getAllUsers();
@@ -38,49 +40,43 @@ const CreateGroup = ({
         path.join('/static/uploaded_images/users', user[0].userPicture)
       );
     }
-  }, [user, createNewGroup]);
-
-  const blankMember = { memberName: '', memberEmail: '' };
-  const [groupMembers, setGroupMembers] = useState([{ ...blankMember }]);
+  }, [user, createNewGroup, groupMembers]);
 
   const addRow = () => {
     setGroupMembers([...groupMembers, { ...blankMember }]);
   };
-  const clickOnDelete = (record) => {
-    setGroupMembers([...groupMembers.filter((r) => r !== record)]);
+  const clickOnDelete = (records) => {
+    const filtered = groupMembers.filter((value) => value !== records);
+    // setGroupMembers(filtered);
+
+    setGroupMembers((groupMembers) => [...filtered]);
   };
   // Extract registered names and emails as an array
   const nameList = registeredUsersList.map((a) => a.userName);
 
   const handleInputChange = (e) => {
-    const updatedMembers = [...groupMembers];
-    if (e.target.className === 'memberName') {
-      const { value } = e.target;
-      let suggestions = [];
-      if (value.length > 0) {
-        const regex = new RegExp(`^${value}`, 'i');
-        suggestions = nameList.sort().filter((v) => regex.test(v));
-      }
-      setNameSuggestions(suggestions);
-      setText(value);
-    }
+    const [name, idx] = e.target.id.split('-');
 
-    updatedMembers[e.target.dataset.idx][e.target.className] = e.target.value;
+    const updatedMembers = [...groupMembers];
+    updatedMembers[idx][name] = e.target.value;
     setGroupMembers(updatedMembers);
   };
 
-  const suggestionSelected = (value) => {
-    setText(value);
+  const suggestionSelected = (e, value) => {
+    const [, idx] = e.target.id.split('-');
     const selectedUser = registeredUsersList.filter(
       (a) => a.userName === value
     );
+    const updatedMembers = [...groupMembers];
+    updatedMembers[idx].memberName = value;
+    updatedMembers[idx].memberEmail = selectedUser[0].userEmail;
 
-    setEmail(selectedUser[0].userEmail);
     if (selectedUser[0].userPicture) {
-      setPic(`/static/uploaded_images/users/${selectedUser[0].userPicture}`);
+      updatedMembers[
+        idx
+      ].memberPicture = `/static/uploaded_images/users/${selectedUser[0].userPicture}`;
     }
-
-    setNameSuggestions([]);
+    setGroupMembers(updatedMembers);
   };
 
   const secondaryFields = () => {
@@ -89,7 +85,6 @@ const CreateGroup = ({
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-
     const groupData = new FormData();
     groupData.append('groupName', groupName);
     groupData.append('groupMembers', JSON.stringify(groupMembers));
@@ -151,25 +146,23 @@ const CreateGroup = ({
               <div className='groupMembers'>
                 <p style={{ float: 'left' }}>
                   <img src={filePath} alt='profilePic' />
+                  &emsp;
                   {user && user[0].userName} (
                   <em>{user && user[0].userEmail}</em>)
                 </p>
               </div>
 
-              <div className='table pt-5'>
+              <div className='pt-5'>
                 {groupMembers.map((val, idx) => (
-                  <MemberInputs
-                    key={`member-${idx}`}
+                  <FreeSolo
+                    key={`mem-${idx}`}
                     idx={idx}
                     members={groupMembers}
+                    userList={nameList}
                     handleInputChange={handleInputChange}
-                    clickDelete={clickOnDelete}
                     vals={val}
-                    suggest={nameSuggestions}
-                    suggestSelected={suggestionSelected}
-                    txt={text}
-                    selectedEmail={email}
-                    imgSrc={pic || profilePic}
+                    onDelete={clickOnDelete}
+                    suggestionSelected={suggestionSelected}
                   />
                 ))}
 
@@ -185,7 +178,7 @@ const CreateGroup = ({
                 </div>
               </div>
             </div>
-
+            <br />
             <input
               type='submit'
               className='btn btn-lg btn-danger'
