@@ -9,7 +9,7 @@ import Navbar from './components/landingPage/Navbar';
 import Profile from './components/user/Profile';
 import CreateGroup from './components/groups/CreateGroup';
 import PrivateRoute from './components/routing/PrivateRoute';
-import Dashboard from './components/dashboard/Dashboard';
+import DashboardLayout from './components/dashboard/DashboardLayout';
 // Redux
 import store from './store';
 import Alert from './components/landingPage/Alert';
@@ -36,7 +36,7 @@ const App = () => {
             <Route exact path='/signup' component={Signup} />
             <PrivateRoute exact path='/me' component={Profile} />
             <PrivateRoute exact path='/new-group' component={CreateGroup} />
-            <PrivateRoute exact path='/dashboard' component={Dashboard} />
+            <PrivateRoute exact path='/dashboard' component={DashboardLayout} />
           </Switch>
         </>
       </Router>

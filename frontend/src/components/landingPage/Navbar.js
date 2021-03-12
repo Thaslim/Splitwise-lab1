@@ -1,15 +1,35 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-shadow */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
+import capitalize from '../../utils/capitalize';
 import splitwiselogo from './splitwise.svg';
+import profilePic from '../user/profile-pic.png';
 
 // eslint-disable-next-line object-curly-newline
 const Navbar = ({ user, isAuthenticated, loading, logout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [fp, setFp] = useState('');
+  const [nameFormat, setNameFormat] = useState('');
+
+  const formatName = () => {
+    if (isAuthenticated) {
+      if (user[0].userName) {
+        setNameFormat(capitalize(user[0].userName));
+      }
+      if (user[0].userPicture) {
+        setFp(`/static/uploaded_images/users/${user[0].userPicture}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    formatName();
+  }, [user]);
 
   const toggleOpen = () => {
     setMenuOpen(!menuOpen);
@@ -29,7 +49,11 @@ const Navbar = ({ user, isAuthenticated, loading, logout }) => {
           aria-haspopup='true'
           aria-expanded='false'
         >
-          {user && user[0].userName}
+          {user && (
+            <img src={fp || profilePic} className='userImage' alt='prfilePic' />
+          )}
+          &nbsp;
+          {user && nameFormat}
         </Link>
 
         <div className={menuClass} aria-labelledby='navbarDropdown'>

@@ -254,7 +254,8 @@ select {
   text-shadow: 0 -1px 0 #c83400;
 }
 
-.groupMembers img {
+.groupMembers img,
+.userImage {
   vertical-align: middle;
   height: 26px;
   width: 26px;
@@ -306,7 +307,7 @@ select {
   margin-top: 5px;
   border-top: 1px solid #f3f3f3;
   border-bottom: 1px solid #eee;
-  text-transform: uppercase;
+
   padding: 0 5px;
   width: 150px;
 }
@@ -318,11 +319,76 @@ select {
   font-size: inherit;
   text-transform: lowercase;
 }
-.dashboard .header {
-  padding: 0;
+.dashboard {
+  padding-top: 2%;
+
   height: 64px;
-  border-bottom: none;
+
+  background-color: #eee;
+  margin-left: -12px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-right: -12px;
 }
 .new-group {
   display: inline;
+}
+
+.center-bars {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+
+  box-shadow: 0 0 12px rgb(0 0 0 / 20%);
+}
+
+.topbar h1 {
+  /* white-space: nowrap; */
+  /* text-overflow: ellipsis; */
+  /* height: 40px; */
+  /* width: 538px; */
+  display: inline;
+  padding-left: 2%;
+
+  /* z-index: 9; */
+  /* background: #eee; */
+}
+.topbar {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.total_balances {
+  font-size: 0px;
+  padding: 10px 0 2px;
+  background: #eee;
+  border-bottom: 1px solid #ddd;
+  color: #999;
+  text-align: center;
+}
+
+.col {
+  display: inline-block;
+  width: 175px;
+  text-align: center;
+  padding: 0 5px;
+  border-left: 1px solid #ddd;
+  line-height: 16px;
+  font-size: 13px;
+}
+
+.btn-mint {
+  background-color: #5ac5a7;
+}
+
+.no-groups {
+  padding: 5px 10px 2px;
+  text-align: center;
+  color: #ccc;
+  font-size: 12px;
+  white-space: normal;
+}
+
+.block:first-child,
+.negatives {
+  border-left: none;
 }

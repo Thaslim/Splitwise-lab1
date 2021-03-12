@@ -63,6 +63,36 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// @route GET api/my-groups/acc-groups
+// @desc Get current user's groups
+// @access Private
+router.get('/acc-groups', auth, async (req, res) => {
+  try {
+    const mygroupList = await splitwisedb.getAcceptedGroups(req.user.key);
+
+    if (!mygroupList.length) {
+      return res.status(400).json({
+        errors: [
+          {
+            msg: `Whoops! You dont belong to any groups yet!`,
+          },
+        ],
+      });
+    }
+    const stringifyGroupList = JSON.stringify(mygroupList);
+    const jsonGroupList = JSON.parse(stringifyGroupList);
+
+    const unresolvedPromises = jsonGroupList.map(async (val) => {
+      return await splitwisedb.getAcceptedMembers(val.groupID);
+    });
+    const acceptedMembers = await Promise.all(unresolvedPromises);
+    res.json({ mygroupList: jsonGroupList, acceptedMembers: acceptedMembers });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // @route GET api/my-groups/get-group/:group_id
 // @desc Get current user's groups
 // @access Private

@@ -11,6 +11,7 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   CLEAR_PROFILE,
+  CLEAR_GROUPS,
 } from './types';
 
 // Load User
@@ -91,5 +92,6 @@ export const login = ({ userEmail, userPassword }) => async (dispatch) => {
 // Logout
 export const logout = () => (dispatch) => {
   dispatch({ type: CLEAR_PROFILE });
+  dispatch({ type: CLEAR_GROUPS });
   dispatch({ type: LOGOUT });
 };

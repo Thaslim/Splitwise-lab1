@@ -15,7 +15,6 @@ function groupReducer(state = initialState, action) {
       return {
         ...state,
         groupCreated: payload,
-        loading: false,
       };
 
     case CREATE_GROUP_ERROR:

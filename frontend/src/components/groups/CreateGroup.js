@@ -12,10 +12,11 @@ import { Link, Redirect, useHistory } from 'react-router-dom';
 import path from 'path';
 import { connect } from 'react-redux';
 import PropTypes, { object } from 'prop-types';
+
 import splitwiselogo from '../landingPage/splitwise.svg';
 
 import { getAllUsers, createNewGroup } from '../../actions/group';
-
+import profilePic from '../user/profile-pic.png';
 import FreeSolo from './AutocompleteInput';
 
 const CreateGroup = ({
@@ -28,10 +29,15 @@ const CreateGroup = ({
   const [maxHeight, setmaxHeight] = useState('0');
   const [groupName, setGroupName] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [filePath, setFilePath] = useState('');
-  const blankMember = { memberName: '', memberEmail: '', memberPicture: '' };
-  // eslint-disable-next-line prefer-const
-  let [groupMembers, setGroupMembers] = useState([{ ...blankMember }]);
+  const [filePath, setFilePath] = useState(profilePic);
+  const blankMember = {
+    index: Math.random(),
+    memberName: '',
+    memberEmail: '',
+    memberPicture: '',
+  };
+
+  const [groupMembers, setGroupMembers] = useState([{ ...blankMember }]);
   const history = useHistory();
   useEffect(() => {
     getAllUsers();
@@ -45,10 +51,9 @@ const CreateGroup = ({
   const addRow = () => {
     setGroupMembers([...groupMembers, { ...blankMember }]);
   };
+
   const clickOnDelete = (records) => {
     const filtered = groupMembers.filter((value) => value !== records);
-    // setGroupMembers(filtered);
-
     setGroupMembers((groupMembers) => [...filtered]);
   };
   // Extract registered names and emails as an array
@@ -86,6 +91,7 @@ const CreateGroup = ({
   const onSubmit = async (e) => {
     e.preventDefault();
     const groupData = new FormData();
+
     groupData.append('groupName', groupName);
     groupData.append('groupMembers', JSON.stringify(groupMembers));
     groupData.append('selectedFile', selectedFile);
@@ -151,31 +157,40 @@ const CreateGroup = ({
                   <em>{user && user[0].userEmail}</em>)
                 </p>
               </div>
-
               <div className='pt-5'>
-                {groupMembers.map((val, idx) => (
-                  <FreeSolo
-                    key={`mem-${idx}`}
-                    idx={idx}
-                    members={groupMembers}
-                    userList={nameList}
-                    handleInputChange={handleInputChange}
-                    vals={val}
-                    onDelete={clickOnDelete}
-                    suggestionSelected={suggestionSelected}
-                  />
-                ))}
-
-                <div colSpan='4'>
-                  <button
-                    onClick={addRow}
-                    type='button'
-                    className='btn btn-primary text-center btn-sm'
-                  >
-                    <i className='fa fa-plus-circle' aria-hidden='true' />
-                    Add Person
-                  </button>
-                </div>
+                <table>
+                  <tbody>
+                    {groupMembers.map((val, idx) => (
+                      <tr key={val.index}>
+                        <td>
+                          <FreeSolo
+                            idx={idx}
+                            members={groupMembers}
+                            userList={nameList}
+                            handleInputChange={handleInputChange}
+                            vals={val}
+                            onDelete={clickOnDelete}
+                            suggestionSelected={suggestionSelected}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot colSpan='4'>
+                    <tr>
+                      <td>
+                        <button
+                          onClick={addRow}
+                          type='button'
+                          className='btn btn-primary text-center btn-sm'
+                        >
+                          <i className='fa fa-plus-circle' aria-hidden='true' />
+                          Add Person
+                        </button>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
             </div>
             <br />

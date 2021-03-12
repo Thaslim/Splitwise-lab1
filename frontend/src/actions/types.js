@@ -18,3 +18,7 @@ export const GET_ALL_USERS = 'GET_ALL_USERS';
 export const GET_ALL_USERS_ERROR = 'GET_ALL_USERS_ERROR';
 export const GET_DASHBOARD = 'GET_DASHBOARD';
 export const DASHBOARD_ERROR = 'DASHBOARD_ERROR';
+export const GET_GROUPS = 'GET_GROUPS';
+export const GET_GROUPS_ERROR = 'GET_GROUPS_ERROR';
+
+export const CLEAR_GROUPS = 'CLEAR_GROUPS';
