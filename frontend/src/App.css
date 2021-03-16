@@ -272,18 +272,13 @@ select {
   top: 225px;
   /* left: 20px; */
 }
+.negative {
+  color: #ff652f;
+}
 
-/* width: 180px;
-  z-index: 3;
-  float: left;
-
-  text-align: left;
-  width: 172px;
-  margin-left: 2px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-} */
+.positive {
+  color: #5bc5a7;
+}
 .open {
   border-left: 6px solid #5bc5a7;
   color: #5bc5a7;

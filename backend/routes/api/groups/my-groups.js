@@ -63,6 +63,10 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+const getUniqueListBy = (arr, key) => {
+  return [...new Map(arr.map((item) => [item[key], item])).values()];
+};
+
 // @route GET api/my-groups/acc-groups
 // @desc Get current user's groups
 // @access Private
@@ -86,7 +90,12 @@ router.get('/acc-groups', auth, async (req, res) => {
       return await splitwisedb.getAcceptedMembers(val.groupID);
     });
     const acceptedMembers = await Promise.all(unresolvedPromises);
-    res.json({ mygroupList: jsonGroupList, acceptedMembers: acceptedMembers });
+    const stringifyAcceptedMembers = JSON.stringify(acceptedMembers);
+    const jsonMemberList = JSON.parse(stringifyAcceptedMembers);
+    const merge = jsonMemberList.flat(1);
+    const uniqueMembers = getUniqueListBy(merge, 'memberEmail');
+
+    res.json({ mygroupList: jsonGroupList, acceptedMembers: uniqueMembers });
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server error');
@@ -96,25 +105,25 @@ router.get('/acc-groups', auth, async (req, res) => {
 // @route GET api/my-groups/get-group/:group_id
 // @desc Get current user's groups
 // @access Private
-router.get('/get-group/:group_id', auth, async (req, res) => {
-  try {
-    let mygroupList = await splitwisedb.getGroupInfo(req.params.group_id);
+// router.get('/get-group/:group_id', auth, async (req, res) => {
+//   try {
+//     let mygroupList = await splitwisedb.getGroupInfo(req.params.group_id);
 
-    if (!mygroupList.length) {
-      return res.status(400).json({
-        errors: [
-          {
-            msg: `Whoops! No group with the given ID!`,
-          },
-        ],
-      });
-    }
-    res.json(mygroupList);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Server error');
-  }
-});
+//     if (!mygroupList.length) {
+//       return res.status(400).json({
+//         errors: [
+//           {
+//             msg: `Whoops! No group with the given ID!`,
+//           },
+//         ],
+//       });
+//     }
+//     res.json(mygroupList);
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).send('Server error');
+//   }
+// });
 
 // @route POST api/my-groups/update-group/:group_id
 // @desc Update group information

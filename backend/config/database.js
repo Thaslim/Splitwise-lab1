@@ -28,21 +28,6 @@ splitwisedb.findUserEmail = (email) => {
   });
 };
 
-// splitwisedb.findAdditionalEmail = (email) => {
-//   return new Promise((resolve, reject) => {
-//     db.query(
-//       `SELECT * FROM Emails WHERE userEmail = ?`,
-//       [email],
-//       (err, result) => {
-//         if (err) {
-//           return reject(err);
-//         }
-//         return resolve(result);
-//       }
-//     );
-//   });
-// };
-
 splitwisedb.insert = (name, email, password, defaultCurrency) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -145,6 +130,21 @@ splitwisedb.insertGroup = (name, groupPicture, userID) => {
   });
 };
 
+splitwisedb.addExpenseToGroup = (desc, amount, paidby, date, group_id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `INSERT INTO Expenses (description, amount, paidByEmail, date, egID) VALUES (?,?,?,?, ?)`,
+      [desc, amount, paidby, date, group_id],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
 splitwisedb.checkGroupName = (name, userID) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -161,11 +161,11 @@ splitwisedb.checkGroupName = (name, userID) => {
   });
 };
 
-splitwisedb.addGroupMembers = (groupID, name, email, status, settled) => {
+splitwisedb.addGroupMembers = (groupID, name, email, status) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `INSERT INTO GroupMembers (groupID, memberName, memberEmail, status, isSettled) VALUES (?,?,?,?,?)`,
-      [groupID, name, email, status, settled],
+      `INSERT INTO GroupMembers (groupID, memberName, memberEmail, status) VALUES (?,?,?,?)`,
+      [groupID, name, email, status],
       (err, result) => {
         if (err) {
           return reject(err);
@@ -263,7 +263,26 @@ splitwisedb.getGroupExpense = (groupID) => {
 splitwisedb.getAcceptedMembers = (groupID) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT idGroupMembers, memberName, memberEmail, memberBalance, isSettled 
+      `SELECT memberName, memberEmail, userPicture 
+      FROM GroupMembers INNER JOIN ExpenseGroups
+      ON ExpenseGroups.idGroups = GroupMembers.groupID
+      join User on GroupMembers.memberEmail = User.userEmail
+      WHERE GroupMembers.groupID = ? AND status = 1 ;`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getAcceptedMembersEmail = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT memberEmail 
       FROM GroupMembers INNER JOIN ExpenseGroups
       ON ExpenseGroups.idGroups = GroupMembers.groupID
       WHERE GroupMembers.groupID = ? AND status = 1 ;`,
@@ -278,10 +297,10 @@ splitwisedb.getAcceptedMembers = (groupID) => {
   });
 };
 
-splitwisedb.getGroupInfo = (groupID) => {
+splitwisedb.getGroupMemberIDs = (groupID) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT groupName, groupPicture, memberName, memberEmail FROM GroupMembers
+      `SELECT idGroupMembers,memberEmail  FROM GroupMembers
       WHERE groupID = ? AND status = 1`,
       [groupID],
       (err, result) => {
@@ -300,6 +319,77 @@ splitwisedb.updateGroup = (groupID) => {
       `UPDATE ExpenseGroups SET groupName = ?, groupPicture =?
       WHERE groupID = ?`,
       [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.splitExpenseWithGroupMembers = (
+  expenseID,
+  groupMemberID,
+  balance
+) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `INSERT INTO SplitExpense (idExpense, idGroupMember, balance, isSettled) VALUES (?,?,?,?)`,
+      [expenseID, groupMemberID, balance, 0],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getAcceptedGroupMemberID = (groupID, email) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT idGroupMembers FROM GroupMembers
+      WHERE status = 1 AND groupID = ? AND memberEmail = ?`,
+      [groupID, email],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getBalanceFromEachGroup = (idGroupMember) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT idExpense,balance FROM SplitExpense
+      WHERE idGroupMember = ? AND isSettled = 0`,
+      [idGroupMember],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getMemberBalanceAgainstCurrentUser = (userEmail, memberEmail) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT idGroupMembers, idExpense, groupID,memberEmail, balance, paidByEmail
+            FROM GroupMembers INNER JOIN ExpenseGroups
+            ON ExpenseGroups.idGroups = GroupMembers.groupID
+            left join SplitExpense on SplitExpense.idGroupMember = GroupMembers.idGroupMembers
+            left join Expenses on SplitExpense.idExpense = Expenses.idExpenses
+            WHERE status = 1 AND memberEmail = ? and paidByEmail =  ?`,
+      [memberEmail, userEmail],
       (err, result) => {
         if (err) {
           return reject(err);

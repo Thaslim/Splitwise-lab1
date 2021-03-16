@@ -7,7 +7,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import getAcceptedGroups from '../../actions/dashboard';
+import { getAcceptedGroups } from '../../actions/dashboard';
 import Dashboard from './Dashboard';
 import capitalize from '../../utils/capitalize';
 import Spinner from '../landingPage/Spinner';
@@ -114,25 +114,23 @@ const DashboardLayout = ({
               {accFriends && user && (
                 <>
                   <ul>
-                    {accFriends.map((group) =>
-                      group.map((mem) => {
-                        if (user[0].userName !== mem.memberName) {
-                          return (
-                            <li key={mem.idGroupMembers}>
-                              <Link
-                                style={{ fontSize: '0.85rem' }}
-                                className='left_sidebar'
-                                to={`/groups/friends/${mem.idGroupMembers}`}
-                              >
-                                <i className='fas fa-user' /> &nbsp;
-                                {mem.memberName}
-                              </Link>
-                            </li>
-                          );
-                        }
-                        return null;
-                      })
-                    )}
+                    {accFriends.map((mem) => {
+                      if (user[0].userEmail !== mem.memberEmail) {
+                        return (
+                          <li key={mem.memberEmail}>
+                            <Link
+                              style={{ fontSize: '0.85rem' }}
+                              className='left_sidebar'
+                              to={`/groups/friends/${mem.idGroupMembers}`}
+                            >
+                              <i className='fas fa-user' /> &nbsp;
+                              {mem.memberName}
+                            </Link>
+                          </li>
+                        );
+                      }
+                      return null;
+                    })}
                   </ul>
                 </>
               )}
@@ -153,7 +151,7 @@ DashboardLayout.propTypes = {
   dashboard: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool,
   getAcceptedGroups: PropTypes.func.isRequired,
-  user: PropTypes.object,
+  user: PropTypes.array,
 };
 DashboardLayout.defaultProps = {
   user: null,

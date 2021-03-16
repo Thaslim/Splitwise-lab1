@@ -1,24 +1,108 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-shadow */
+/* eslint-disable object-curly-newline */
 /* eslint-disable react/forbid-prop-types */
-import React, { useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import AddBillPopUp from '../expenses/AddBillPopUp';
+import { addExpense, getDashBoardSummary } from '../../actions/dashboard';
+import { roundToTwo, reducedSum } from '../../utils/calc';
+import findInArray from '../../utils/findInArray';
+import ListBalance from './ListBalance';
+import Spinner from '../landingPage/Spinner';
+import profilePic from '../user/profile-pic.png';
 
-const Dashboard = ({ acceptedGroups, user }) => {
-  const [state, setState] = useState('');
+const Dashboard = ({
+  dashboard: { summary, loading },
+  acceptedGroups,
+  user,
+  addExpense,
+  getDashBoardSummary,
+  isAuthenticated,
+}) => {
   const [billPopUp, setBillPopUp] = useState(false);
+  const [cSymbol, setCSymbol] = useState('');
+  const [getBack, setGetBack] = useState();
+  const [owe, setOwe] = useState();
+  const [oweNames, setOweNames] = useState([]);
+  const [getBackNames, setgetBackNames] = useState([]);
+
   const [expenseDetails, setExpenseDetails] = useState({
     groupID: '',
     desc: '',
     amount: '',
     date: '',
   });
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setCSymbol(getSymbolFromCurrency(user[0].userCurrency));
+      getDashBoardSummary();
+    }
+    if (!loading && summary) {
+      const getBacks = summary.summary.map((val) => {
+        if (Object.values(val)[0] > 0) {
+          const memName = findInArray(
+            acceptedGroups.acceptedMembers,
+            Object.keys(val)[0]
+          );
+          setgetBackNames((getBackNames) => [
+            ...getBackNames,
+            {
+              name: memName.memberName,
+              bal: Object.values(val)[0],
+              pic: memName.userPicture,
+            },
+          ]);
+          return Object.values(val)[0];
+        }
+        return 0;
+      });
+      const owes = summary.summary.map((val) => {
+        if (Object.values(val)[0] < 0) {
+          const memName = findInArray(
+            acceptedGroups.acceptedMembers,
+            Object.keys(val)[0]
+          );
+          setOweNames((oweNames) => [
+            ...oweNames,
+            {
+              name: memName.memberName,
+              bal: Object.values(val)[0],
+              pic: memName.userPicture,
+            },
+          ]);
+          return Object.values(val)[0];
+        }
+        return 0;
+      });
+      setGetBack(roundToTwo(reducedSum(getBacks)));
+      setOwe(roundToTwo(reducedSum(owes)));
+    }
+  }, [getDashBoardSummary, isAuthenticated, loading]);
 
   const onInputChange = (e) => {
     setExpenseDetails({ ...expenseDetails, [e.target.name]: e.target.value });
   };
-  return (
+
+  const { groupID, description, amount, date } = expenseDetails;
+
+  const onSave = async (e) => {
+    e.preventDefault();
+    addExpense({
+      groupID,
+      description,
+      amount,
+      date,
+    });
+  };
+
+  return summary === null ? (
+    <Spinner />
+  ) : (
     <div className='dashboard'>
       <div className='topbar'>
         <h1>Dashboard</h1>
@@ -34,7 +118,7 @@ const Dashboard = ({ acceptedGroups, user }) => {
           >
             Add an expense
           </button>
-          &nbsp;
+          &emsp;
           <button
             type='button'
             className='btn btn-large bg-teal text-white'
@@ -47,19 +131,74 @@ const Dashboard = ({ acceptedGroups, user }) => {
       </div>
 
       <div className='total_balances'>
+        {!acceptedGroups && (
+          <>
+            <h3>Welcome to Splitwise!</h3>{' '}
+            <h5>
+              Splitwise helps you split bills with friends. Create a group and
+              add some friends
+            </h5>
+          </>
+        )}
+        {!summary && (
+          <>
+            <h3>Welcome to Splitwise!</h3>{' '}
+            <h5>Add an expense to get started!</h5>
+          </>
+        )}
         <div className='row'>
           <div className='col block'>
             <div className='title'>total balance</div>
 
-            <span className='positive'>+ $20.00</span>
+            {summary && summary.totalBalance > 0 && (
+              <span className='positive'>
+                <strong>
+                  + {cSymbol}
+                  {roundToTwo(summary.totalBalance)}
+                </strong>
+              </span>
+            )}
+            {summary && summary.totalBalance < 0 && (
+              <span className='negative'>
+                <strong>
+                  - {cSymbol}
+                  {roundToTwo(-summary.totalBalance)}
+                </strong>
+              </span>
+            )}
           </div>
           <div className='col block '>
             <div className='title'>you owe</div>
-            <span className='neutral'>$0.00</span>
+
+            {summary && !owe && (
+              <span className='neutral'>
+                {cSymbol}
+                {owe}
+              </span>
+            )}
+            {summary && owe < 0 && (
+              <span className='negative'>
+                -{cSymbol}
+                {-owe}
+              </span>
+            )}
           </div>
           <div className='col block'>
             <div className='title'>you are owed</div>
-            <span className='positive'>$20.00</span>
+            {summary && getBack > 0 && (
+              <span className='positive'>
+                <strong>
+                  {cSymbol}
+                  {getBack}
+                </strong>
+              </span>
+            )}
+            {summary && !getBack && (
+              <span className='neutral'>
+                {cSymbol}
+                {getBack}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -79,43 +218,48 @@ const Dashboard = ({ acceptedGroups, user }) => {
       <div className='container'>
         <div className='row'>
           <div className='col negatives'>
-            <div
-              style={{
-                textAlign: 'left',
-                color: '#999',
-                fontSize: '16px',
-                marginTop: '6px',
-              }}
-            >
-              You do not owe anything
-            </div>
+            {!owe && <>You do not owe anything</>}
+            <ul>
+              {owe !== 0 &&
+                oweNames.map((val) => (
+                  <li key={Math.random()}>
+                    <ListBalance
+                      name={val.name}
+                      cls='negative'
+                      amount={roundToTwo(val.bal)}
+                      csymbol={cSymbol}
+                      txt='you owe'
+                      imgSrc={
+                        (val.pic &&
+                          `/static/uploaded_images/users/${val.pic}`) ||
+                        profilePic
+                      }
+                    />
+                  </li>
+                ))}
+            </ul>
           </div>
 
-          <div className='col positives'>
+          <div className='col'>
+            {!getBack && <>You are not owed anything</>}
             <ul>
-              <li className='relationship'>
-                <a href='#/friends/38379544'>
-                  <img src='' alt='Avatar' />
-                  <span className='name'>fewrew</span>
-                  <br />
-                  <span className='balance owes_me'>
-                    owes you
-                    <span className='amount'>$12.50</span>
-                  </span>
-
-                  <ul className='balance_details'>
-                    <li>
-                      fewrew owes you <span className='positive'>$5.00</span>{' '}
-                      for “Trip”
-                    </li>
-
-                    <li>
-                      fewrew owes you <span className='positive'>$7.50</span>{' '}
-                      for “as”
-                    </li>
-                  </ul>
-                </a>
-              </li>
+              {getBack !== 0 &&
+                getBackNames.map((val) => (
+                  <li key={Math.random()}>
+                    <ListBalance
+                      name={val.name}
+                      cls='positive'
+                      amount={roundToTwo(val.bal)}
+                      csymbol={cSymbol}
+                      txt='owes you'
+                      imgSrc={
+                        (val.pic &&
+                          `/static/uploaded_images/users/${val.pic}`) ||
+                        profilePic
+                      }
+                    />
+                  </li>
+                ))}
             </ul>
           </div>
         </div>
@@ -129,7 +273,8 @@ const Dashboard = ({ acceptedGroups, user }) => {
             setExpenseDetails={setExpenseDetails}
             mygroups={acceptedGroups && acceptedGroups.mygroupList}
             onInputChange={onInputChange}
-            defaultCurrency={user && user[0].userCurrency}
+            currency={cSymbol}
+            onSave={onSave}
           />
         </>
       )}
@@ -139,14 +284,23 @@ const Dashboard = ({ acceptedGroups, user }) => {
 
 Dashboard.propTypes = {
   acceptedGroups: PropTypes.object.isRequired,
-  user: PropTypes.object,
+  user: PropTypes.array,
+  addExpense: PropTypes.func.isRequired,
+  getDashBoardSummary: PropTypes.func.isRequired,
+  dashboard: PropTypes.object.isRequired,
+  isAuthenticated: PropTypes.bool,
 };
 
 Dashboard.defaultProps = {
   user: null,
+  isAuthenticated: false,
 };
 const mapStateToProps = (state) => ({
   acceptedGroups: state.dashboard.acceptedGroups,
   user: state.auth.user,
+  dashboard: state.dashboard,
+  isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, {})(Dashboard);
+export default connect(mapStateToProps, { addExpense, getDashBoardSummary })(
+  Dashboard
+);

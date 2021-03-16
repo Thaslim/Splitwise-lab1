@@ -1,41 +1,42 @@
-import React from 'react'
+/* eslint-disable object-curly-newline */
+/* eslint-disable react/prop-types */
+import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-export const ListBalance = () => {
-    return (
-       <div>
-<li class="relationship">
-                <Link to={`/friends/:${id}`}>
-                  <img src={imgSrc} alt="Avatar">
-                  <div class="name">fewrew</div>
-                  <div class="balance i_owe">
-                    you owe
-                    <span class="amount">$27.50</span>
-                  </div>
-                  
-                    <ul class="balance_details">
-                      
-                        <li onclick="App.relationshipsRouter.navigate('#/groups/23047512', true); return false">
-                          
-                          
-                          
-                          
-                          fewrew owes you <span class="positive">$5.00</span> for “Trip”
-                        </li>
-                      
-                        <li onclick="App.relationshipsRouter.navigate('#/groups/23049769', true); return false">
-                          
-                          
-                          
-                          
-                          You owe fewrew <span class="negative">$32.50</span> for “as”
-                        </li>
-                      
-                    </ul>
-                  
-                </a>
-              </li>
+const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
+  <div className='groupMembers'>
+    <img src={imgSrc} style={{ float: 'left' }} alt='Avatar' />
 
-       </div>
-    )
-}
+    <h6 style={{ fontSize: '0.85rem' }}>
+      <strong
+        style={{
+          float: 'left',
+          marginTop: '2%',
+          paddingLeft: '2%',
+        }}
+      >
+        {name}
+      </strong>
+
+      <span className={cls}>
+        {txt}
+        <br />
+        {csymbol} {amount}
+      </span>
+    </h6>
+  </div>
+);
+
+ListBalance.propTypes = {
+  cls: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  amount: PropTypes.number.isRequired,
+  csymbol: PropTypes.string.isRequired,
+  txt: PropTypes.string.isRequired,
+  imgSrc: PropTypes.string.isRequired,
+};
+ListBalance.defaultProps = {
+  name: '',
+};
+export default ListBalance;

@@ -66,8 +66,6 @@ const Profile = ({
     profileData.append('selectedFile', selectedFile);
 
     updateUserProfile(profileData, history);
-    // eslint-disable-next-line react/jsx-indent
-    // <Redirect to='/dashboard' />;
   };
 
   return loading && profile === null ? (

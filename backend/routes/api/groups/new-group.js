@@ -101,8 +101,7 @@ router.post(
         currGroupID,
         currUserName[0].userName,
         req.user.key,
-        1,
-        0
+        1
       );
       const objArray = JSON.parse(members);
       if (objArray && objArray.length) {
@@ -111,7 +110,6 @@ router.post(
             currGroupID,
             x.memberName,
             x.memberEmail,
-            0,
             0
           );
         });
