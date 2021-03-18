@@ -13,7 +13,7 @@ import {
   getDashBoardSummary,
 } from '../../actions/dashboard';
 import { roundToTwo, reducedSum } from '../../utils/calc';
-import { findInArray, groupbyEmail } from '../../utils/findUtil';
+import { findInArray } from '../../utils/findUtil';
 import ListBalance from './ListBalance';
 import Spinner from '../landingPage/Spinner';
 import profilePic from '../user/profile-pic.png';

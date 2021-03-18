@@ -6,9 +6,8 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { NavLink, Redirect, useHistory } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import path from 'path';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import AddBillPopUp from '../expenses/AddBillPopUp';
 import { getGroupActivity } from '../../actions/group';
@@ -16,8 +15,6 @@ import { findInArray, findbyID, sortArray } from '../../utils/findUtil';
 import Spinner from '../landingPage/Spinner';
 import profilePic from '../user/profile-pic.png';
 import SettleUp from '../expenses/SettleUp';
-
-import { getAcceptedGroups } from '../../actions/dashboard';
 import ListExpenses from './ListExpenses';
 import { roundToTwo } from '../../utils/calc';
 import GroupBalanceList from './GroupBalanceList';
@@ -55,6 +52,7 @@ const Groups = ({
     }
 
     if (summary) {
+      // eslint-disable-next-line no-unused-vars
       const owes = summary.summary.map((val) => {
         if (Object.values(val)[0] < 0) {
           const memName = findInArray(

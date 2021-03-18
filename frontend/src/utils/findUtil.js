@@ -38,7 +38,6 @@ export const getMonthDate = (date) => {
 };
 
 export const groupbyEmail = (arrObj) => {
-  console.log('here', arrObj);
   const individualGroupMembers = Object.values(
     arrObj.reduce((result, { name, bal, pic, email }) => {
       // Create new group
@@ -52,6 +51,6 @@ export const groupbyEmail = (arrObj) => {
       return result;
     }, {})
   );
-  console.log(individualGroupMembers);
+
   return individualGroupMembers;
 };

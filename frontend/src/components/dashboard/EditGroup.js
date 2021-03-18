@@ -4,11 +4,11 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import path from 'path';
 import { connect } from 'react-redux';
 
-import PropTypes, { object } from 'prop-types';
+import PropTypes from 'prop-types';
 import Spinner from '../landingPage/Spinner';
 import splitwiselogo from '../landingPage/splitwise.svg';
 import { editGroupInfo } from '../../actions/group';
@@ -19,7 +19,6 @@ import { findbyID } from '../../utils/findUtil';
 import { getAcceptedGroups } from '../../actions/dashboard';
 
 const EditGroup = ({
-  user,
   match,
   getAcceptedGroups,
   dashboard: { acceptedGroups, loading },
@@ -28,7 +27,6 @@ const EditGroup = ({
   const history = useHistory();
   const [groupName, setGroupName] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [groupPicture, setGroupPicture] = useState('');
   const [groupMemInfo, setGroupMemInfo] = useState([]);
   const [filePath, setFilePath] = useState('');
 
@@ -41,9 +39,6 @@ const EditGroup = ({
       );
       setGroupName(!groupDetails[0].groupName ? '' : groupDetails[0].groupName);
 
-      setGroupPicture(
-        !groupDetails[0].groupPicture ? '' : groupDetails[0].groupPicture
-      );
       if (groupDetails[0].groupPicture) {
         setFilePath(
           path.join(
@@ -165,13 +160,9 @@ const EditGroup = ({
 EditGroup.propTypes = {
   editGroupInfo: PropTypes.func.isRequired,
   dashboard: PropTypes.object.isRequired,
-  user: PropTypes.array,
   getAcceptedGroups: PropTypes.func.isRequired,
 };
 
-EditGroup.defaultProps = {
-  user: null,
-};
 const mapStateToProps = (state) => ({
   user: state.auth.user,
   dashboard: state.dashboard,

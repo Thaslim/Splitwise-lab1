@@ -4,22 +4,21 @@
 /* eslint-disable react/forbid-prop-types */
 
 /* eslint-disable no-shadow */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink, Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import {
   getAllMyGroups,
   acceptGroupInvitation,
   rejectInvitation,
-  getGroupActivity,
 } from '../../actions/group';
 import profilePic from '../user/profile-pic.png';
 
 const MyGroups = ({
   getAllMyGroups,
   user,
-  group,
+
   isAuthenticated,
   acceptGroupInvitation,
   rejectInvitation,

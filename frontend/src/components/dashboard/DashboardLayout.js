@@ -3,7 +3,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/forbid-prop-types */
 import React, { useState, useEffect } from 'react';
-import { NavLink, Redirect } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getAcceptedGroups } from '../../actions/dashboard';

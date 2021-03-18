@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import { Provider } from 'react-redux';
@@ -21,8 +21,6 @@ import setToken from './utils/setToken';
 import MyGroups from './components/dashboard/MyGroups';
 
 const App = () => {
-  const [leftSidebar, setLeftSidebar] = useState(false);
-
   useEffect(() => {
     if (localStorage.token) {
       setToken(localStorage.token);
