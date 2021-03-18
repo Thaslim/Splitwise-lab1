@@ -67,6 +67,75 @@ const getUniqueListBy = (arr, key) => {
   return [...new Map(arr.map((item) => [item[key], item])).values()];
 };
 
+// @route post api/my-groups/accept-invitation
+// @desc accept group invitation
+// @access Private
+router.post('/accept-invitation', auth, async (req, res) => {
+  const groupID = req.body.groupID;
+
+  try {
+    const acceptInvitation = await splitwisedb.acceptInvitation(
+      groupID,
+      req.user.key
+    );
+
+    return res.json('Updated');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route post api/my-groups/reject-invitation
+// @desc reject group invitation
+// @access Private
+router.post('/reject-invitation', auth, async (req, res) => {
+  const groupID = req.body.groupID;
+
+  try {
+    const checkBalance = await splitwisedb.getGroupBalances(groupID);
+    const stringifyBal = JSON.stringify(checkBalance);
+    const jsonBal = JSON.parse(stringifyBal);
+    if (jsonBal && jsonBal.length > 0) {
+      const found = jsonBal.find(
+        (element) => element.memberEmail === req.user.key
+      );
+      if (found && found.total > 0) {
+        return res.status(400).json({
+          errors: [
+            {
+              msg: `Settle up all the balances before leaving the group`,
+            },
+          ],
+        });
+      }
+    }
+
+    const createdBy = await splitwisedb.getCreatedBy(groupID);
+    console.log(groupID, createdBy);
+    if (createdBy) {
+      if (createdBy.createdBy === req.user.id && jsonBal.length > 0) {
+        return res.status(400).json({
+          errors: [
+            {
+              msg: `Delete the group if balances with other group members are not settled up`,
+            },
+          ],
+        });
+      }
+    }
+    const rejectInvitation = await splitwisedb.rejectInvitation(
+      groupID,
+      req.user.key
+    );
+
+    return res.json('Rejected Invitation');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
 // @route GET api/my-groups/acc-groups
 // @desc Get current user's groups
 // @access Private

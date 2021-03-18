@@ -371,3 +371,14 @@ select {
   float: left;
   clear: none;
 }
+
+.allmygroups {
+  width: 60%;
+
+  padding-right: 20;
+
+  background-color: rgb(194, 219, 218);
+
+  margin-left: auto;
+  margin-right: auto;
+}

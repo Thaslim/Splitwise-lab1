@@ -18,6 +18,7 @@ import store from './store';
 import Alert from './components/landingPage/Alert';
 import { loadUser } from './actions/auth';
 import setToken from './utils/setToken';
+import MyGroups from './components/dashboard/MyGroups';
 
 const App = () => {
   const [leftSidebar, setLeftSidebar] = useState(false);
@@ -41,6 +42,7 @@ const App = () => {
             <Route exact path='/signup' component={Signup} />
             <PrivateRoute exact path='/me' component={Profile} />
             <PrivateRoute exact path='/new-group' component={CreateGroup} />
+            <PrivateRoute exact path='/my-groups' component={MyGroups} />
             <>
               <DashboardLayout />
               <PrivateRoute exact path='/dashboard' component={Dashboard} />

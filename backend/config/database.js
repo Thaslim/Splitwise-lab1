@@ -195,7 +195,7 @@ splitwisedb.getUserName = (userID) => {
 splitwisedb.getGroupsList = (email) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT groupName, status, groupID FROM ExpenseGroups
+      `SELECT groupName, status, groupID, groupPicture FROM ExpenseGroups
       INNER JOIN GroupMembers 
       ON GroupMembers.groupID = ExpenseGroups.idGroups 
       WHERE memberEmail = ?`,
@@ -472,6 +472,51 @@ splitwisedb.getGroupBalances = (groupID) => {
     db.query(
       `SELECT idGroupMembers, memberEmail, sum(balance) as total
       FROM splitwise.GroupMembers join SplitExpense on idGroupMember = idGroupMembers where groupID=? and status=1 group by idGroupMember`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.acceptInvitation = (groupID, email) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `UPDATE GroupMembers set status = 1 where groupID =? AND memberEmail = ?`,
+      [groupID, email],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.rejectInvitation = (groupID, email) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `DELETE FROM GroupMembers where groupID =? AND memberEmail =?`,
+      [groupID, email],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getCreatedBy = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT createdBy from ExpenseGroups where idGroups=?`,
       [groupID],
       (err, result) => {
         if (err) {

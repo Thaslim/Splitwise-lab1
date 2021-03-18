@@ -11,9 +11,10 @@ const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
     <span style={{ fontSize: '0.85rem' }}>
       <strong
         style={{
+          paddingLeft: '2%',
           float: 'left',
           marginTop: '2%',
-          paddingLeft: '2%',
+          marginRight: '-35%',
         }}
       >
         {name}

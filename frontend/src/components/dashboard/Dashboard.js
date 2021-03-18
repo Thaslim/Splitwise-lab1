@@ -83,9 +83,15 @@ const Dashboard = ({
       setGetBack(roundToTwo(reducedSum(getBacks)));
       setOwe(roundToTwo(reducedSum(owes)));
     }
-  }, [getDashBoardSummary, getAcceptedGroups, isAuthenticated, summaryLoading]);
+  }, [
+    getDashBoardSummary,
+    getAcceptedGroups,
+    isAuthenticated,
+    summary,
+    summaryLoading,
+  ]);
 
-  return acceptedGroups === null || (summaryLoading && summary === null) ? (
+  return acceptedGroups === null || summaryLoading || summary === null ? (
     <Spinner />
   ) : (
     <div className='center-bars'>

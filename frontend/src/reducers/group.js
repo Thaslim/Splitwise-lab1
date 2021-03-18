@@ -9,6 +9,13 @@ import {
   EDIT_GROUP_INFO,
   EDIT_GROUP_INFO_ERROR,
   CLEAR_GROUP_ACTIVITY,
+  GET_ALL_MY_GROUPS,
+  GET_ALL_MY_GROUPS_ERROR,
+  CLEAR_ALL_MY_GROUPS,
+  ACCEPT_INVITATION_ERROR,
+  ACCEPT_INVITATION,
+  REJECT_INVITATION,
+  REJECT_INVITATION_ERROR,
 } from '../actions/types';
 
 const initialState = {
@@ -17,6 +24,8 @@ const initialState = {
   error: {},
   groupActivity: null,
   groupInfo: null,
+  allMyGroups: null,
+  invitation: '',
 };
 
 function groupReducer(state = initialState, action) {
@@ -32,6 +41,9 @@ function groupReducer(state = initialState, action) {
     case GET_ALL_USERS_ERROR:
     case GET_GROUP_ACTIVITY_ERROR:
     case EDIT_GROUP_INFO_ERROR:
+    case GET_ALL_MY_GROUPS_ERROR:
+    case ACCEPT_INVITATION_ERROR:
+    case REJECT_INVITATION_ERROR:
       return {
         ...state,
         error: payload,
@@ -55,6 +67,26 @@ function groupReducer(state = initialState, action) {
       return {
         ...state,
         groupActivity: null,
+      };
+    case GET_ALL_MY_GROUPS:
+      return {
+        ...state,
+        allMyGroups: payload,
+      };
+    case CLEAR_ALL_MY_GROUPS:
+      return {
+        ...state,
+        allMyGroups: null,
+      };
+    case ACCEPT_INVITATION:
+      return {
+        ...state,
+        invitation: 'accepted',
+      };
+    case REJECT_INVITATION:
+      return {
+        ...state,
+        invitation: 'Rejected',
       };
 
     default:

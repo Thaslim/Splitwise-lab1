@@ -14,13 +14,13 @@ import AddBillPopUp from '../expenses/AddBillPopUp';
 import { getGroupActivity } from '../../actions/group';
 import { findInArray, findbyID, sortArray } from '../../utils/findUtil';
 import Spinner from '../landingPage/Spinner';
-
 import profilePic from '../user/profile-pic.png';
 import SettleUp from '../expenses/SettleUp';
 
 import { getAcceptedGroups } from '../../actions/dashboard';
 import ListExpenses from './ListExpenses';
 import { roundToTwo } from '../../utils/calc';
+import GroupBalanceList from './GroupBalanceList';
 
 const Groups = ({
   group: { groupActivity },
@@ -36,13 +36,14 @@ const Groups = ({
   const [oweNames, setOweNames] = useState([]);
   const [groupName, setGroupName] = useState('');
   const [groupImg, setGroupImg] = useState('');
-
+  const history = useHistory();
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated && user) {
       setCSymbol(getSymbolFromCurrency(user[0].userCurrency));
+      getGroupActivity(match.params.id);
+      if (!acceptedGroups) history.push('/dashboard');
     }
 
-    getGroupActivity(match.params.id);
     if (acceptedGroups && acceptedGroups.mygroupList.length > 0) {
       const groupInfo = findbyID(acceptedGroups.mygroupList, match.params.id);
       setGroupImg(
@@ -198,9 +199,49 @@ const Groups = ({
         </div>
       </div>
 
-      {/* <div style={{ float: 'right', paddingRight: '8%', paddingTop: '-5%' }}>
-        <h2>Group balances</h2>
-      </div> */}
+      <div
+        style={{
+          float: 'right',
+          paddingLeft: '4%',
+          position: 'fixed',
+          display: 'inline-block',
+        }}
+      >
+        <h2 style={{ paddingBottom: '5%' }}>Group balances</h2>
+        <ul>
+          {groupActivity &&
+            groupActivity.groupMemberBalance.map((ele) => {
+              let cls;
+              let txt;
+              if (ele.total > 0) {
+                cls = 'negative';
+                txt = 'owes';
+              } else if (ele.total < 0) {
+                cls = 'positive';
+                txt = 'gets back';
+              } else {
+                cls = 'neutral';
+                txt = 'settled up';
+              }
+              const picture =
+                acceptedGroups &&
+                findInArray(acceptedGroups.acceptedMembers, ele.memberEmail);
+
+              return (
+                <li key={ele.idGroupMembers}>
+                  <GroupBalanceList
+                    imgSrc={picture}
+                    cls={cls}
+                    amount={Math.abs(ele.total)}
+                    csymbol={cSymbol}
+                    email={ele.memberEmail}
+                    txt={txt}
+                  />
+                </li>
+              );
+            })}
+        </ul>
+      </div>
     </div>
   );
 };
@@ -223,4 +264,6 @@ const mapStateToProps = (state) => ({
   group: state.group,
   isAuthenticated: state.auth.isAuthenticated,
 });
-export default connect(mapStateToProps, { getGroupActivity })(Groups);
+export default connect(mapStateToProps, {
+  getGroupActivity,
+})(Groups);
