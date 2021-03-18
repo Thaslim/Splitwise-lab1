@@ -8,8 +8,8 @@ import splitwiselogo from '../landingPage/splitwise.svg';
 
 const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    userEmail: '',
+    userPassword: '',
   });
   const { userEmail, userPassword } = formData;
   const history = useHistory();

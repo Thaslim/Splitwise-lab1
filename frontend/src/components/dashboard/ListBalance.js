@@ -26,7 +26,6 @@ const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
     </span>
   </div>
 );
-
 ListBalance.propTypes = {
   cls: PropTypes.string.isRequired,
   name: PropTypes.string,

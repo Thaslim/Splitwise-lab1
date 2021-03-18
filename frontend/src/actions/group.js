@@ -1,5 +1,6 @@
 import axios from 'axios';
 import setAlert from './alert';
+import { getAcceptedGroups } from './dashboard';
 
 import {
   CREATE_GROUP,
@@ -54,6 +55,7 @@ export const createNewGroup = (groupData, history) => async (dispatch) => {
       payload: res.data,
     });
     dispatch(setAlert('Group created', 'success'));
+    dispatch(getAcceptedGroups());
     setTimeout(() => {
       history.push('/dashboard');
     }, 300);
@@ -164,6 +166,8 @@ export const acceptGroupInvitation = (groupID, history) => async (dispatch) => {
       payload: res.data,
     });
     dispatch(setAlert('Invitation Accepted', 'success'));
+    dispatch(getAcceptedGroups());
+    dispatch(getGroupActivity(`${groupID}`));
     setTimeout(() => {
       history.push(`/api/groups/${groupID}`);
     }, 500);

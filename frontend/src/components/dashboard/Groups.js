@@ -75,7 +75,7 @@ const Groups = ({
         return 0;
       });
     }
-  }, [getGroupActivity, match]);
+  }, [getGroupActivity, match, acceptedGroups]);
   return groupActivity === null ? (
     <Spinner />
   ) : (

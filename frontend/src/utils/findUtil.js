@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable object-curly-newline */
 /* eslint-disable comma-dangle */
 export const findInArray = (arrObj, email) => {
   const found = arrObj.find((element) => element.memberEmail === email);
@@ -33,4 +35,23 @@ export const getMonthDate = (date) => {
   ];
 
   return monthNames[date];
+};
+
+export const groupbyEmail = (arrObj) => {
+  console.log('here', arrObj);
+  const individualGroupMembers = Object.values(
+    arrObj.reduce((result, { name, bal, pic, email }) => {
+      // Create new group
+      if (!result[email]) result[email] = { email, details: [] };
+      // Append to group
+      result[email].details.push({
+        name,
+        bal,
+        pic,
+      });
+      return result;
+    }, {})
+  );
+  console.log(individualGroupMembers);
+  return individualGroupMembers;
 };

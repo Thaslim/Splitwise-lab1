@@ -54,13 +54,6 @@ router.post(
         });
       }
 
-      // //Get user's gravatar
-      // const avatar = gravatar.url(email, {
-      //   s: '200',
-      //   r: 'pg',
-      //   d: 'mm',
-      // });
-
       //Encrypt password
 
       const salt = await bcrypt.genSalt(10);

@@ -17,7 +17,6 @@ const AggregateBalance = (arr) => {
 };
 
 const reduce_sum = (arr) => {
-  // get sum of msgCount prop across all objects in array
   const balanceTotal = arr.reduce((prev, cur) => {
     return prev + cur;
   }, 0);
@@ -30,14 +29,6 @@ const reduce_sum = (arr) => {
 router.get('/', auth, async (req, res) => {
   try {
     const myGroups = await splitwisedb.getAcceptedGroups(req.user.key);
-
-    // const unresolvedPromises = myGroups.map(async (val) => {
-    //   return await splitwisedb.getAcceptedGroupMemberID(
-    //     val.groupID,
-    //     req.user.key
-    //   );
-    // });
-    // const userGroupMemberIds = await Promise.all(unresolvedPromises);
 
     const unresolvedMembers = myGroups.map(async (val) => {
       return await splitwisedb.getAcceptedMembersEmail(val.groupID);

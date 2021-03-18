@@ -13,7 +13,7 @@ import {
   getDashBoardSummary,
 } from '../../actions/dashboard';
 import { roundToTwo, reducedSum } from '../../utils/calc';
-import { findInArray } from '../../utils/findUtil';
+import { findInArray, groupbyEmail } from '../../utils/findUtil';
 import ListBalance from './ListBalance';
 import Spinner from '../landingPage/Spinner';
 import profilePic from '../user/profile-pic.png';
@@ -38,7 +38,6 @@ const Dashboard = ({
     if (user) {
       setCSymbol(getSymbolFromCurrency(user[0].userCurrency));
     }
-
     if (isAuthenticated && !summary) getDashBoardSummary();
     if (isAuthenticated && !acceptedGroups) getAcceptedGroups();
     if (summary) {
@@ -127,7 +126,7 @@ const Dashboard = ({
         <div className='total_balances'>
           {!acceptedGroups && (
             <>
-              <h3>Welcome to Splitwise!</h3>{' '}
+              <h3>Welcome to Splitwise!</h3>
               <h5>
                 Splitwise helps you split bills with friends. Create a group and
                 add some friends
@@ -136,7 +135,7 @@ const Dashboard = ({
           )}
           {!summary && (
             <>
-              <h3>Welcome to Splitwise!</h3>{' '}
+              <h3>Welcome to Splitwise!</h3>
               <h5>Add an expense to get started!</h5>
             </>
           )}
