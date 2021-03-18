@@ -1,51 +1,107 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getMonthDate } from '../../utils/findUtil';
 
 const ListExpenses = ({
-  decription,
+  description,
   paidAmount,
   lentAmount,
   paidby,
   lent,
   date,
+  currency,
+  cls,
 }) => {
-  // const month = date.getMonth();
-  console.log(date, new Date(date).getDate());
+  const dt = new Date(date);
   return (
-    <div className='summary'>
-      <div className='expense summary involved'>
-        <div className='main-block'>
-          <div className='date'>
-            {}
-            <div className='number'>{new Date(date).getDate()}</div>
+    <div className='expense' style={{ height: '70%' }}>
+      <div className='main-block'>
+        <div
+          className='date'
+          style={{
+            color: '#999',
+            textTransform: 'uppercase',
+            fontSize: '12px',
+            height: '35px',
+            width: '35px',
+            float: 'left',
+          }}
+        >
+          {getMonthDate(dt.getMonth())}
+          <div
+            className='number'
+            style={{
+              color: '#999',
+              fontSize: '20px',
+            }}
+          >
+            {dt.getDate()}
           </div>
-          <i className='fas fa-receipt' />
-          <div className='header'>
-            <span className='description '>Expense Name</span>
-          </div>
         </div>
-        <div className='cost'>
-          you paid
-          <br />
-          <span className='number'>$200.00</span>
-        </div>
-        <div className='you '>
-          you lent T.
-          <br />
-          <span className='positive'>$100.00</span>
-        </div>
+        <i
+          className='fas fa-receipt'
+          style={{
+            fontSize: '25px',
+            color: '#555555',
+            marginTop: '5%',
+            opacity: '0.6',
+          }}
+        />
+        &nbsp;
+        {description}
+      </div>
+      <div
+        className='cost'
+        style={{
+          color: '#aaa',
+          padding: '11px 10px 12px 5px',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          width: '100px',
+          float: 'left',
+          clear: 'none',
+        }}
+      >
+        {paidby}
+        <br />
+        <span
+          className='number'
+          style={{ fontSize: '16px', color: '#000', fontWeight: 'bold' }}
+        >
+          {currency}
+          {paidAmount}
+        </span>
+      </div>
+      <div
+        className='you'
+        style={{
+          color: '#aaa',
+          padding: '11px 10px 12px 5px',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          width: '100px',
+        }}
+      >
+        {lent}
+
+        <span className={cls} style={{ fontSize: '16px', fontWeight: 'bold' }}>
+          {currency}
+          {lentAmount}
+        </span>
       </div>
     </div>
   );
 };
 
 ListExpenses.propTypes = {
-  decription: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
   paidAmount: PropTypes.number.isRequired,
   lentAmount: PropTypes.number.isRequired,
   paidby: PropTypes.string.isRequired,
   lent: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
+  currency: PropTypes.string.isRequired,
+  cls: PropTypes.string.isRequired,
 };
 
 export default ListExpenses;

@@ -1,45 +1,11 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .container-fluid {
   padding-left: 15%;
   padding-right: 15%;
+}
+.side_bar {
+  padding-left: 15%;
+  width: 400px;
+  position: absolute;
 }
 .inline-block {
   display: inline-block;
@@ -312,40 +278,34 @@ select {
   padding-left: 40px;
   display: inline;
   font-size: inherit;
-  text-transform: lowercase;
 }
 .dashboard {
   padding-top: 2%;
-
-  height: 64px;
-
+  height: 100%;
   background-color: #eee;
   margin-left: -12px;
   border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
   margin-right: -12px;
+  box-shadow: 0 0 12px rgb(0 0 0 / 20%);
 }
 .new-group {
   display: inline;
 }
 
 .center-bars {
+  margin-left: 30%;
+  width: 620px;
+  position: static;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
-
   box-shadow: 0 0 12px rgb(0 0 0 / 20%);
 }
 
 .topbar h1 {
-  /* white-space: nowrap; */
-  /* text-overflow: ellipsis; */
-  /* height: 40px; */
-  /* width: 538px; */
   display: inline;
   padding-left: 2%;
-
-  /* z-index: 9; */
-  /* background: #eee; */
 }
 .topbar {
   border-bottom: 1px solid #ddd;
@@ -359,6 +319,9 @@ select {
   border-bottom: 1px solid #ddd;
   color: #999;
   text-align: center;
+}
+.balances {
+  background: #fff;
 }
 
 .col {
@@ -386,4 +349,25 @@ select {
 .block:first-child,
 .negatives {
   border-left: none;
+}
+
+.color-change {
+  color: rgb(102, 214, 199);
+  font-weight: bold;
+}
+
+.side_bar:hover {
+  color: rgb(95, 167, 162);
+}
+
+.group-heading:hover {
+  color: rgb(95, 167, 162) !important;
+}
+
+.main-block {
+  width: 307px;
+  padding: 9px 5px 6px 20px;
+  position: relative;
+  float: left;
+  clear: none;
 }

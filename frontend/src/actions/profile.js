@@ -41,7 +41,7 @@ export const updateUserProfile = (profileData, history) => async (dispatch) => {
     dispatch(setAlert('Profile updated', 'success'));
     setTimeout(() => {
       history.push('/dashboard');
-    }, 1000);
+    }, 800);
   } catch (error) {
     const { errors } = error.response.data;
 

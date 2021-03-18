@@ -1,6 +1,8 @@
+/* eslint-disable object-curly-newline */
 /* eslint-disable operator-linebreak */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import {
   TextField,
@@ -16,8 +18,8 @@ import {
   FormControl,
 } from '@material-ui/core';
 import CurrencyTextField from '@unicef/material-ui-currency-textfield';
-
 import PropTypes from 'prop-types';
+import { addExpense } from '../../actions/dashboard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,12 +36,33 @@ const useStyles = makeStyles((theme) => ({
 const AddBillPopUp = ({
   billPopUp,
   setBillPopUp,
-  expenseDetails,
-  onSave,
   currency,
   mygroups,
-  onInputChange,
+  // eslint-disable-next-line no-shadow
+  addExpense,
 }) => {
+  const [expenseDetails, setExpenseDetails] = useState({
+    groupID: '',
+    desc: '',
+    amount: '',
+    date: '',
+  });
+  const { groupID, description, amount, date } = expenseDetails;
+  const onInputChange = (e) => {
+    setExpenseDetails({ ...expenseDetails, [e.target.name]: e.target.value });
+  };
+  const onSave = async (e) => {
+    e.preventDefault();
+    addExpense({
+      groupID,
+      description,
+      amount,
+      date,
+    });
+    setTimeout(() => {
+      setBillPopUp(false);
+    }, 1000);
+  };
   const classes = useStyles();
   return (
     <div>
@@ -123,10 +146,8 @@ const AddBillPopUp = ({
 AddBillPopUp.propTypes = {
   billPopUp: PropTypes.bool.isRequired,
   setBillPopUp: PropTypes.func.isRequired,
-  expenseDetails: PropTypes.object.isRequired,
-  onInputChange: PropTypes.func.isRequired,
   currency: PropTypes.string.isRequired,
   mygroups: PropTypes.array.isRequired,
-  onSave: PropTypes.func.isRequired,
+  addExpense: PropTypes.func.isRequired,
 };
-export default AddBillPopUp;
+export default connect(null, { addExpense })(AddBillPopUp);

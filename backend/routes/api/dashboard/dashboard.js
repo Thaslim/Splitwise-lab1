@@ -76,7 +76,6 @@ router.get('/', auth, async (req, res) => {
       [membersExceptMe[i]]: AggregateBalance(val),
     }));
 
-    // get sum of msgCount prop across all objects in array
     const owedToMeArr = owedToMe.map((val) => {
       return Object.values(val);
     });

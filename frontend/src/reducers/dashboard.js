@@ -8,6 +8,8 @@ import {
   CLEAR_DASHBOARD,
   GET_DASHBOARD,
   DASHBOARD_ERROR,
+  SETTLE_EXPENSE,
+  SETTLE_EXPENSE_ERROR,
 } from '../actions/types';
 
 const initialState = {
@@ -15,6 +17,9 @@ const initialState = {
   summary: null,
   error: {},
   loading: true,
+  summaryLoading: true,
+  expenseAdded: false,
+  expenseSettled: false,
 };
 
 function dashboardReducer(state = initialState, action) {
@@ -42,33 +47,46 @@ function dashboardReducer(state = initialState, action) {
     case ADD_EXPENSE:
       return {
         ...state,
-        loading: false,
+        expenseAdded: true,
       };
 
     case ADD_EXPENSE_ERROR:
       return {
         ...state,
         error: payload,
-        loading: false,
+        expenseAdded: false,
       };
     case GET_DASHBOARD:
       return {
         ...state,
         summary: payload,
-        loading: false,
+        summaryLoading: false,
       };
 
     case DASHBOARD_ERROR:
       return {
         ...state,
         error: payload,
-        loading: false,
+        summaryLoading: false,
       };
     case CLEAR_DASHBOARD:
       return {
         ...state,
         summary: null,
-        loading: false,
+        summaryLoading: false,
+      };
+
+    case SETTLE_EXPENSE:
+      return {
+        ...state,
+        expenseSettled: true,
+      };
+
+    case SETTLE_EXPENSE_ERROR:
+      return {
+        ...state,
+        error: payload,
+        expenseSettled: true,
       };
     default:
       return state;

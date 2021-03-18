@@ -9,36 +9,29 @@ const { check, validationResult } = require('express-validator/');
 // @route GET api/groups/:group_id
 // @desc Get expense by group id
 // @access Private
-// router.get('/group/:group_id', auth, async (req, res) => {
-//   try {
-//     const groupExpense = await splitwisedb.getGroupExpense(req.params.group_id);
-
-//     if (!groupExpense.length) {
-//       return res.status(400).json({
-//         errors: [
-//           {
-//             msg: `Whoops! You didn't add any expense yet!`,
-//           },
-//         ],
-//       });
-//     }
-//     const memberBalance = await splitwisedb.getAcceptedMembers(
-//       req.params.group_id
-//     );
-//     res.json({
-//       groups: [
-//         { groupExpense: groupExpense },
-//         { memberBalance: memberBalance },
-//       ],
-//     });
-//   } catch (error) {
-//     console.error(error.message);
-//     res.status(500).send('Server error');
-//   }
-// });
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const groupExpense = await splitwisedb.getGroupExpense(
+      req.params.id,
+      req.user.key
+    );
+    const memCount = await splitwisedb.getGroupMemberIDs(req.params.id);
+    const groupMemberBalance = await splitwisedb.getGroupBalances(
+      req.params.id
+    );
+    res.json({
+      groups: groupExpense,
+      memCount: memCount.length,
+      groupMemberBalance: groupMemberBalance,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error');
+  }
+});
 
 // @route POST api/groups/:group_id
-// @desc Update profile information
+// @desc Split expense
 // @access Private
 
 router.post(
@@ -51,8 +44,6 @@ router.post(
     ],
   ],
   async (req, res) => {
-    // console.log(req.body);
-
     const { description: desc, amount: amount, date: date } = req.body;
     const paidBy = req.user.id;
     const group_id = req.params.group_id;

@@ -9,6 +9,8 @@ import {
   ADD_EXPENSE_ERROR,
   GET_DASHBOARD,
   DASHBOARD_ERROR,
+  SETTLE_EXPENSE,
+  SETTLE_EXPENSE_ERROR,
 } from './types';
 
 // Get users active groups list
@@ -66,11 +68,12 @@ export const addExpense = ({ groupID, description, amount, date }) => async (
       headers: { 'Content-type': 'application/json' },
     };
     const body = JSON.stringify({ groupID, description, amount, date });
-    const res = await axios.post(`/api/groups/:${groupID}`, body, config);
+    const res = await axios.post(`/api/groups/${groupID}`, body, config);
     dispatch({
       type: ADD_EXPENSE,
       payload: res.data,
     });
+    dispatch(setAlert('Expense Added', 'success'));
   } catch (error) {
     const { errors } = error.response.data;
     if (errors) {
@@ -78,6 +81,34 @@ export const addExpense = ({ groupID, description, amount, date }) => async (
     }
     dispatch({
       type: ADD_EXPENSE_ERROR,
+      payload: {
+        msg: error.response.statusText,
+        status: error.response.status,
+      },
+    });
+  }
+};
+
+// Settle expense
+export const settleExpense = (settleWithEmail) => async (dispatch) => {
+  try {
+    const config = {
+      headers: { 'Content-type': 'application/json' },
+    };
+    const body = JSON.stringify({ settleWithEmail });
+    const res = await axios.post('/api/settle', body, config);
+    dispatch({
+      type: SETTLE_EXPENSE,
+      payload: res.data,
+    });
+    dispatch(setAlert('Settled balance', 'success'));
+  } catch (error) {
+    const { errors } = error.response.data;
+    if (errors) {
+      errors.forEach((err) => dispatch(setAlert(err.msg, 'danger')));
+    }
+    dispatch({
+      type: SETTLE_EXPENSE_ERROR,
       payload: {
         msg: error.response.statusText,
         status: error.response.status,

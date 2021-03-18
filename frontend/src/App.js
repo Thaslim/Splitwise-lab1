@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import { Provider } from 'react-redux';
@@ -10,6 +10,9 @@ import Profile from './components/user/Profile';
 import CreateGroup from './components/groups/CreateGroup';
 import PrivateRoute from './components/routing/PrivateRoute';
 import DashboardLayout from './components/dashboard/DashboardLayout';
+import Dashboard from './components/dashboard/Dashboard';
+import Groups from './components/dashboard/Groups';
+import EditGroup from './components/dashboard/EditGroup';
 // Redux
 import store from './store';
 import Alert from './components/landingPage/Alert';
@@ -17,6 +20,8 @@ import { loadUser } from './actions/auth';
 import setToken from './utils/setToken';
 
 const App = () => {
+  const [leftSidebar, setLeftSidebar] = useState(false);
+
   useEffect(() => {
     if (localStorage.token) {
       setToken(localStorage.token);
@@ -28,15 +33,23 @@ const App = () => {
       <Router>
         <>
           <Navbar />
-          <Route exact path='/' component={Landing} />
 
           <Alert />
           <Switch>
+            <Route exact path='/' component={Landing} />
             <Route exact path='/login' component={Login} />
             <Route exact path='/signup' component={Signup} />
             <PrivateRoute exact path='/me' component={Profile} />
             <PrivateRoute exact path='/new-group' component={CreateGroup} />
-            <PrivateRoute exact path='/dashboard' component={DashboardLayout} />
+            <>
+              <DashboardLayout />
+              <PrivateRoute exact path='/dashboard' component={Dashboard} />
+              <PrivateRoute path='/groups/:id' component={Groups} />
+              <PrivateRoute
+                path='/my-groups/get-group/:id'
+                component={EditGroup}
+              />
+            </>
           </Switch>
         </>
       </Router>

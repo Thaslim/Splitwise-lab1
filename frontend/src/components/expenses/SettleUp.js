@@ -1,9 +1,12 @@
+/* eslint-disable no-shadow */
+/* eslint-disable object-curly-newline */
 /* eslint-disable operator-linebreak */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import {
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,10 +19,7 @@ import {
   FormControl,
   DialogContentText,
 } from '@material-ui/core';
-
-import PropTypes from 'prop-types';
-
-import Spinner from '../landingPage/Spinner';
+import { settleExpense } from '../../actions/dashboard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,99 +27,106 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1),
       width: '30ch',
     },
-    typography: {
-      // In Japanese the characters are usually larger.
-      fontSize: 8,
-    },
   },
   selectEmpty: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(3),
+  },
+
+  resize: {
+    fontSize: 30,
+    color: 'green',
   },
 }));
 
 const SettleUp = ({
-  billPopUp,
-  setBillPopUp,
-  expenseDetails,
-
-  defaultCurrency,
-  mygroups,
-  onInputChange,
+  settleUp,
+  setSettleUp,
+  currency,
+  oweNames,
+  settleExpense,
 }) => {
+  const [settleWithEmail, setSettleWithEmail] = useState('');
+
+  const onSettle = async (e) => {
+    e.preventDefault();
+    settleExpense(settleWithEmail);
+    setTimeout(() => {
+      setSettleUp(false);
+    }, 1000);
+  };
   const classes = useStyles();
   return (
     <div>
       <Dialog
-        open={billPopUp}
+        open={settleUp}
         onClose={() => {
-          setBillPopUp(false);
+          setSettleUp(false);
         }}
         aria-labelledby='form-dialog-title'
       >
         <DialogTitle style={{ background: '#1cc29f' }} id='form-dialog-title'>
-          Add an expense
+          Settle Up
         </DialogTitle>
-        <DialogContentText>
-          Select a group to settle up expenses.
-        </DialogContentText>
-        {!mygroups && <DialogContent>Please create a Group </DialogContent>}
-        <DialogContent>
-          <FormControl required className={classes.root}>
-            <InputLabel>Group</InputLabel>
-            <Select
-              id='demo-simple-select-required'
-              value={expenseDetails.groupID}
-              onChange={(e) => onInputChange(e)}
-              className={classes.selectEmpty}
-              name='groupID'
-            >
-              {mygroups &&
-                mygroups.map((val) => (
-                  <MenuItem key={val.groupID} value={val.groupID}>
-                    {val.groupName}
-                  </MenuItem>
-                ))}
-            </Select>
 
-            <TextField
-              required
-              label='Description'
-              value={expenseDetails.description}
-              name='description'
-            />
-            <TextField
-              required
-              type='number'
-              label={`Amount ${defaultCurrency}`}
-              value={expenseDetails.amount}
-              name='amount'
-            />
-            <TextField
-              required
-              type='date'
-              value={expenseDetails.date}
-              name='date'
-            />
-            <FormHelperText>* Required</FormHelperText>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setBillPopUp(false);
-            }}
-            color='primary'
-          >
-            Cancel
-          </Button>
-          <Button background='#1cc29f' color='secondary'>
-            Save
-          </Button>
-        </DialogActions>
+        {!oweNames.length && (
+          <DialogContent className={classes.resize}>
+            Nothing to Settle{' '}
+          </DialogContent>
+        )}
+
+        {oweNames.length && (
+          <>
+            <DialogContentText>Select a friend to Settle.</DialogContentText>
+            <form onSubmit={(e) => onSettle(e)}>
+              <DialogContent>
+                <FormControl required className={classes.root}>
+                  <InputLabel>settle to</InputLabel>
+                  <Select
+                    id='settle-to-select'
+                    value={settleWithEmail}
+                    onChange={(e) => setSettleWithEmail(e.target.value)}
+                    className={classes.selectEmpty}
+                    name='settleWithEmail'
+                  >
+                    {oweNames &&
+                      oweNames.map((val) => (
+                        <MenuItem key={val.email} value={val.email}>
+                          {val.name} (Amount: {currency}
+                          {-val.bal})
+                        </MenuItem>
+                      ))}
+                  </Select>
+
+                  <FormHelperText>* Required</FormHelperText>
+                </FormControl>
+              </DialogContent>
+
+              <DialogActions>
+                <Button
+                  onClick={() => {
+                    setSettleUp(false);
+                  }}
+                  color='primary'
+                >
+                  Cancel
+                </Button>
+                <Button type='submit' background='#1cc29f' color='secondary'>
+                  Settle
+                </Button>
+              </DialogActions>
+            </form>
+          </>
+        )}
       </Dialog>
     </div>
   );
 };
 
-SettleUp.propTypes = {};
-export default SettleUp;
+SettleUp.propTypes = {
+  settleUp: PropTypes.bool.isRequired,
+  setSettleUp: PropTypes.func.isRequired,
+  oweNames: PropTypes.array.isRequired,
+  currency: PropTypes.string.isRequired,
+  settleExpense: PropTypes.func.isRequired,
+};
+export default connect(null, { settleExpense })(SettleUp);

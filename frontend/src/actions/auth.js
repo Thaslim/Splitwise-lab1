@@ -64,7 +64,9 @@ export const signup = ({ userName, userEmail, userPassword }) => async (
 };
 
 // Login User
-export const login = ({ userEmail, userPassword }) => async (dispatch) => {
+export const login = ({ userEmail, userPassword, history }) => async (
+  dispatch
+) => {
   const config = {
     headers: { 'content-type': 'application/json' },
   };
@@ -77,6 +79,9 @@ export const login = ({ userEmail, userPassword }) => async (dispatch) => {
       payload: res.data,
     });
     dispatch(loadUser());
+    setTimeout(() => {
+      history.push('/dashboard');
+    }, 1000);
   } catch (err) {
     const { errors } = err.response.data;
 

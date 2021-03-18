@@ -95,35 +95,37 @@ router.get('/acc-groups', auth, async (req, res) => {
     const merge = jsonMemberList.flat(1);
     const uniqueMembers = getUniqueListBy(merge, 'memberEmail');
 
-    res.json({ mygroupList: jsonGroupList, acceptedMembers: uniqueMembers });
+    const individualGroupMembers = Object.values(
+      merge.reduce(
+        (result, { memberName, memberEmail, userPicture, groupID }) => {
+          // Create new group
+          if (!result[groupID])
+            result[groupID] = {
+              groupID,
+              details: [],
+            };
+          // Append to group
+          result[groupID].details.push({
+            memberName,
+            memberEmail,
+            userPicture,
+          });
+          return result;
+        },
+        {}
+      )
+    );
+
+    res.json({
+      mygroupList: jsonGroupList,
+      acceptedMembers: uniqueMembers,
+      individualGroupMembers: individualGroupMembers,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Server error');
   }
 });
-
-// @route GET api/my-groups/get-group/:group_id
-// @desc Get current user's groups
-// @access Private
-// router.get('/get-group/:group_id', auth, async (req, res) => {
-//   try {
-//     let mygroupList = await splitwisedb.getGroupInfo(req.params.group_id);
-
-//     if (!mygroupList.length) {
-//       return res.status(400).json({
-//         errors: [
-//           {
-//             msg: `Whoops! No group with the given ID!`,
-//           },
-//         ],
-//       });
-//     }
-//     res.json(mygroupList);
-//   } catch (error) {
-//     console.error(error.message);
-//     res.status(500).send('Server error');
-//   }
-// });
 
 // @route POST api/my-groups/update-group/:group_id
 // @desc Update group information
@@ -138,12 +140,12 @@ router.post(
   ],
   async (req, res) => {
     console.log(req.body);
-    let filepath;
+    let selectedFile;
     const userID = req.user.id;
 
-    const { groupName: name, groupMembers: members } = req.body;
+    const { groupName: name } = req.body;
     if (req.file) {
-      filepath = req.file.filename;
+      selectedFile = req.file.filename;
     }
 
     const errors = validationResult(req);
@@ -163,7 +165,11 @@ router.post(
           ],
         });
       }
-      let updatedGroup = await splitwisedb.updateGroup(req.params.group_id);
+      let updatedGroup = await splitwisedb.updateGroup(
+        req.params.group_id,
+        name,
+        selectedFile
+      );
 
       return res.json(updatedGroup);
     } catch (error) {

@@ -8,7 +8,7 @@ const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
   <div className='groupMembers'>
     <img src={imgSrc} style={{ float: 'left' }} alt='Avatar' />
 
-    <h6 style={{ fontSize: '0.85rem' }}>
+    <span style={{ fontSize: '0.85rem' }}>
       <strong
         style={{
           float: 'left',
@@ -18,13 +18,11 @@ const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
       >
         {name}
       </strong>
-
-      <span className={cls}>
-        {txt}
-        <br />
-        {csymbol} {amount}
-      </span>
-    </h6>
+      {txt}
+    </span>
+    <span className={cls}>
+      {csymbol} {amount}
+    </span>
   </div>
 );
 

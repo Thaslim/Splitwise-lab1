@@ -3,12 +3,10 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/forbid-prop-types */
 import React, { useState, useEffect } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { NavLink, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { getAcceptedGroups } from '../../actions/dashboard';
-import Dashboard from './Dashboard';
 import capitalize from '../../utils/capitalize';
 import Spinner from '../landingPage/Spinner';
 
@@ -18,51 +16,57 @@ const DashboardLayout = ({
   getAcceptedGroups,
   isAuthenticated,
 }) => {
-  const [centerDisplay, setCenterDisplay] = useState('Dashboard');
   const [accList, setAccList] = useState([]);
   const [accFriends, setAccFriends] = useState([]);
+
   useEffect(() => {
-    if (isAuthenticated) getAcceptedGroups();
-    if (!loading && acceptedGroups) {
+    if (isAuthenticated && !acceptedGroups) getAcceptedGroups();
+    if (acceptedGroups) {
       setAccList(acceptedGroups.mygroupList);
       setAccFriends(acceptedGroups.acceptedMembers);
     }
-  }, [isAuthenticated, loading]);
+  }, [getAcceptedGroups, acceptedGroups, isAuthenticated]);
 
   return loading && acceptedGroups === null ? (
     <Spinner />
   ) : (
-    <div className='container-fluid'>
+    <div className='side_bar'>
       <div className='row'>
         <div className='col-sm'>
           <div id='left_sidebar'>
-            <Link
+            <NavLink
+              exact
+              activeClassName='color-change'
               to='/dashboard'
-              id='dashboard_link'
               className='left_sidebar'
-              onClick={() => setCenterDisplay('Dashboard')}
             >
               <img
                 src='/favicon.ico'
                 alt='logo'
-                style={{ paddingBottom: '5px' }}
+                style={{ paddingBottom: '5px', opacity: '0.5' }}
               />
               &nbsp;Dashboard
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
+              exact
+              activeClassName='color-change'
               to='/activity'
               id='notifications_link'
               className='left_sidebar'
-              onClick={() => setCenterDisplay('RecentActivity')}
             >
               <i className='fab fa-font-awesome-flag' /> Recent activity
-            </Link>
+            </NavLink>
             <div>
-              <div className='header '>
-                Groups &emsp; &emsp;
-                <Link to='/new-group' className='left_sidebar hlink'>
+              <div className='header' style={{ textTransform: 'uppercase' }}>
+                Groups &emsp;
+                <NavLink
+                  exact
+                  activeClassName='color-change'
+                  to='/new-group'
+                  className='left_sidebar hlink'
+                >
                   <i className='fas fa-plus' /> Add
-                </Link>
+                </NavLink>
               </div>
 
               {!accList && (
@@ -78,14 +82,17 @@ const DashboardLayout = ({
                   <ul>
                     {accList.map((group) => (
                       <li key={group.groupID}>
-                        <Link
+                        <NavLink
+                          exact
+                          activeClassName='color-change'
                           style={{ fontSize: '0.85rem' }}
                           className='left_sidebar'
-                          to={`/groups/group/${group.groupID}`}
+                          to={`/groups/${group.groupID}`}
                         >
                           <i className='fas fa-tag' /> &nbsp;
                           {group.groupName}
-                        </Link>
+                          &emsp;
+                        </NavLink>
                       </li>
                     ))}
                   </ul>
@@ -94,15 +101,16 @@ const DashboardLayout = ({
             </div>
 
             <div>
-              <div className='header '>
-                Friends &emsp; &emsp;
-                <Link
+              <div className='header' style={{ textTransform: 'uppercase' }}>
+                Friends &emsp;
+                <NavLink
+                  exact
+                  activeClassName='color-change'
                   to='/new-group'
                   className='left_sidebar hlink'
-                  onClick={() => setCenterDisplay('Friends')}
                 >
                   <i className='fas fa-plus' /> Add
-                </Link>
+                </NavLink>
               </div>
               {!accFriends && (
                 <>
@@ -118,14 +126,16 @@ const DashboardLayout = ({
                       if (user[0].userEmail !== mem.memberEmail) {
                         return (
                           <li key={mem.memberEmail}>
-                            <Link
+                            <NavLink
+                              exact
+                              activeClassName='color-change'
                               style={{ fontSize: '0.85rem' }}
                               className='left_sidebar'
                               to={`/groups/friends/${mem.idGroupMembers}`}
                             >
                               <i className='fas fa-user' /> &nbsp;
-                              {mem.memberName}
-                            </Link>
+                              {capitalize(mem.memberName)}
+                            </NavLink>
                           </li>
                         );
                       }
@@ -137,11 +147,6 @@ const DashboardLayout = ({
             </div>
           </div>
         </div>
-        <div className='col-8  center-bars '>
-          {centerDisplay === 'Dashboard' && <Dashboard />}
-        </div>
-
-        <div className='col' />
       </div>
     </div>
   );

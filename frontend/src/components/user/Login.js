@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 import React, { useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../../actions/auth';
@@ -12,13 +12,14 @@ const Login = ({ login, isAuthenticated }) => {
     password: '',
   });
   const { userEmail, userPassword } = formData;
+  const history = useHistory();
   const onInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    login({ userEmail, userPassword });
+    login({ userEmail, userPassword, history });
   };
 
   // Redirect if logged in
