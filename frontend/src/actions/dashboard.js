@@ -22,10 +22,6 @@ export const getAcceptedGroups = () => async (dispatch) => {
       payload: res.data,
     });
   } catch (error) {
-    const { errors } = error.response.data;
-    if (errors) {
-      errors.forEach((err) => dispatch(setAlert(err.msg, 'danger')));
-    }
     dispatch({
       type: GET_GROUPS_ERROR,
       payload: {

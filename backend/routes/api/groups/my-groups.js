@@ -51,7 +51,7 @@ router.get('/', auth, async (req, res) => {
       return res.status(400).json({
         errors: [
           {
-            msg: `Whoops! You dont belong to any groups yet!`,
+            msg: `Create a group to get started!`,
           },
         ],
       });

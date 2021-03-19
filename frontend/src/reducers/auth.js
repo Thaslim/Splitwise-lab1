@@ -50,23 +50,6 @@ function authReducer(state = initialState, action) {
         user: null,
       };
 
-    // case ACCOUNT_DELETED:
-    //   return {
-    //     ...state,
-    //     token: null,
-    //     isAuthenticated: false,
-    //     loading: false,
-    //     user: null,
-    //   };
-    // case AUTH_ERROR:
-    // case LOGOUT:
-    //   return {
-    //     ...state,
-    //     token: null,
-    //     isAuthenticated: false,
-    //     loading: false,
-    //     user: null,
-    //   };
     default:
       return state;
   }

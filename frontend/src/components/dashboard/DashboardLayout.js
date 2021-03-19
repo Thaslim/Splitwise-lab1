@@ -20,14 +20,14 @@ const DashboardLayout = ({
   const [accFriends, setAccFriends] = useState([]);
 
   useEffect(() => {
-    if (isAuthenticated && !acceptedGroups) getAcceptedGroups();
+    if (isAuthenticated && loading) getAcceptedGroups();
     if (acceptedGroups) {
       setAccList(acceptedGroups.mygroupList);
       setAccFriends(acceptedGroups.acceptedMembers);
     }
-  }, [getAcceptedGroups, acceptedGroups, isAuthenticated]);
+  }, [getAcceptedGroups, loading, isAuthenticated]);
 
-  return loading && acceptedGroups === null ? (
+  return loading ? (
     <Spinner />
   ) : (
     <div className='side_bar'>
@@ -69,7 +69,7 @@ const DashboardLayout = ({
                 </NavLink>
               </div>
 
-              {!accList && (
+              {!accList.length && (
                 <>
                   <div className='no-groups'>
                     You do not have any groups yet.&nbsp;
@@ -112,7 +112,7 @@ const DashboardLayout = ({
                   <i className='fas fa-plus' /> Add
                 </NavLink>
               </div>
-              {!accFriends && (
+              {!accFriends.length && (
                 <>
                   <div className='no-groups'>
                     You have not added any friends yet.&nbsp;

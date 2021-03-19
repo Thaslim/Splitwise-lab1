@@ -13,6 +13,7 @@ import {
   CLEAR_PROFILE,
   CLEAR_GROUPS,
   CLEAR_DASHBOARD,
+  CLEAR_ALL_MY_GROUPS,
 } from './types';
 
 // Load User
@@ -100,5 +101,6 @@ export const logout = () => (dispatch) => {
   dispatch({ type: CLEAR_PROFILE });
   dispatch({ type: CLEAR_GROUPS });
   dispatch({ type: CLEAR_DASHBOARD });
+  dispatch({ type: CLEAR_ALL_MY_GROUPS });
   dispatch({ type: LOGOUT });
 };

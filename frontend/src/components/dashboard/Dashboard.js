@@ -20,7 +20,7 @@ import profilePic from '../user/profile-pic.png';
 import SettleUp from '../expenses/SettleUp';
 
 const Dashboard = ({
-  dashboard: { acceptedGroups, summary, summaryLoading },
+  dashboard: { acceptedGroups, loading, summary, summaryLoading },
   user,
   getDashBoardSummary,
   getAcceptedGroups,
@@ -39,7 +39,7 @@ const Dashboard = ({
       setCSymbol(getSymbolFromCurrency(user[0].userCurrency));
     }
     if (isAuthenticated && !summary) getDashBoardSummary();
-    if (isAuthenticated && !acceptedGroups) getAcceptedGroups();
+    if (isAuthenticated && loading) getAcceptedGroups();
     if (summary) {
       const getBacks = summary.summary.map((val) => {
         if (Object.values(val)[0] > 0) {
@@ -90,7 +90,7 @@ const Dashboard = ({
     summaryLoading,
   ]);
 
-  return acceptedGroups === null || summaryLoading || summary === null ? (
+  return loading || summaryLoading || summary === null ? (
     <Spinner />
   ) : (
     <div className='center-bars'>
