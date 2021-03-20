@@ -72,13 +72,23 @@ const getUniqueListBy = (arr, key) => {
 // @access Private
 router.post('/accept-invitation', auth, async (req, res) => {
   const groupID = req.body.groupID;
-
+  const groupName = await splitwisedb.getGroupName(groupID);
   try {
     const acceptInvitation = await splitwisedb.acceptInvitation(
       groupID,
       req.user.key
     );
+    const userName = await splitwisedb.getUserName(req.user.id);
 
+    const activity = await splitwisedb.addActivity(
+      'accepted invitation',
+      groupID,
+      groupName[0].groupName,
+      userName[0].userName,
+      req.user.key,
+      userName[0].userName,
+      req.user.key
+    );
     return res.json('Updated');
   } catch (error) {
     console.error(error);
@@ -100,7 +110,7 @@ router.post('/reject-invitation', auth, async (req, res) => {
       const found = jsonBal.find(
         (element) => element.memberEmail === req.user.key
       );
-      if (found && found.total > 0) {
+      if (found && Math.abs(found.total) > 0.5) {
         return res.status(400).json({
           errors: [
             {
@@ -112,7 +122,7 @@ router.post('/reject-invitation', auth, async (req, res) => {
     }
 
     const createdBy = await splitwisedb.getCreatedBy(groupID);
-    console.log(groupID, createdBy);
+
     if (createdBy) {
       if (createdBy.createdBy === req.user.id && jsonBal.length > 0) {
         return res.status(400).json({
@@ -208,7 +218,6 @@ router.post(
     [check('groupName', "First name can't be blank").not().isEmpty()],
   ],
   async (req, res) => {
-    console.log(req.body);
     let selectedFile;
     const userID = req.user.id;
 
