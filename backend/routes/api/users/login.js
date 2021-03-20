@@ -40,8 +40,6 @@ router.post(
 
     const { userEmail: email, userPassword: password } = req.body;
 
-    // console.log(name, email, password);
-
     try {
       let results = await splitwisedb.getUserbyEmail(email);
       // console.log(JSON.stringify(results));

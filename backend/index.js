@@ -13,6 +13,7 @@ import { router as mygroupsRouter } from './routes/api/groups/my-groups.js';
 import { router as groupsRouter } from './routes/api/groups/groups.js';
 import { router as dashboardRouter } from './routes/api/dashboard/dashboard.js';
 import { router as settleRouter } from './routes/api/groups/settleUp.js';
+import { router as activityRouter } from './routes/api/groups/activity.js';
 
 app.get('/', (req, res) => {
   res.send('API running');
@@ -28,9 +29,13 @@ app.use('/api/my-groups', mygroupsRouter);
 app.use('/api/groups', groupsRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/settle', settleRouter);
+app.use('/api/activity', activityRouter);
 
 const port = process.env.PORT || 8000;
+
 app.listen(port, () => {
-  // eslint-disable-next-line no-console
+  // eslint-dis able-next-line no-console
   console.log(`running on port ${port}`);
 });
+
+export default app;

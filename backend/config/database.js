@@ -1,16 +1,6 @@
-import mysql from 'mysql';
-import dotenv from 'dotenv';
-dotenv.config({ path: './config/.env' });
-
-const db = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE,
-  port: process.env.DATABASE_PORT,
-  connectionLimit: 10,
-});
-
+import poolDB from './connectionPool.js';
+// import mysqlConnection from './connectiondb.js';
+const db = poolDB;
 export let splitwisedb = {};
 
 splitwisedb.findUserEmail = (email) => {
@@ -192,6 +182,22 @@ splitwisedb.getUserName = (userID) => {
   });
 };
 
+splitwisedb.getUserNamebyEmail = (email) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT userName, userCurrency FROM User 
+      WHERE userEmail = ?`,
+      [email],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
 splitwisedb.getGroupsList = (email) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -200,6 +206,22 @@ splitwisedb.getGroupsList = (email) => {
       ON GroupMembers.groupID = ExpenseGroups.idGroups 
       WHERE memberEmail = ?`,
       [email],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getGroupName = (gid) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT groupName FROM ExpenseGroups
+      WHERE idGroups = ?`,
+      [gid],
       (err, result) => {
         if (err) {
           return reject(err);
@@ -404,7 +426,7 @@ splitwisedb.getMemberBalanceAgainstCurrentUser = (userEmail, memberEmail) => {
 splitwisedb.getRelatedBalances = (memEmail, settleWithEmail) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT idSplitExpense, idExpense, balance FROM Expenses 
+      `SELECT idSplitExpense, idExpense, egID, balance FROM Expenses 
       join SplitExpense ON Expenses.idExpenses = SplitExpense.idExpense
       join GroupMembers ON GroupMembers.idGroupMembers = SplitExpense.idGroupMember
       where status = 1 and isSettled = 0 and memberEmail = ? and paidByEmail=? and balance >0`,
@@ -422,7 +444,7 @@ splitwisedb.getRelatedBalances = (memEmail, settleWithEmail) => {
 splitwisedb.getPaidByBalances = (paidEmail) => {
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT idSplitExpense, idExpense, balance FROM Expenses 
+      `SELECT idSplitExpense, idExpense, balance, groupID FROM Expenses 
       join SplitExpense ON Expenses.idExpenses = SplitExpense.idExpense
       join GroupMembers ON GroupMembers.idGroupMembers = SplitExpense.idGroupMember
       where status = 1 and isSettled = 0 and paidByEmail=? and balance <0`,
@@ -517,6 +539,52 @@ splitwisedb.getCreatedBy = (groupID) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT createdBy from ExpenseGroups where idGroups=?`,
+      [groupID],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.addActivity = (
+  action,
+  groupID,
+  name,
+  actionByName,
+  actionByEmail,
+  actionWithName,
+  actionWithEmail
+) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `INSERT INTO Activity (action, idGroup, gName,actionByName, actionByEmail, actionWithName,actionWithEmail) VALUES (?,?,?,?,?, ?, ?)`,
+      [
+        action,
+        groupID,
+        name,
+        actionByName,
+        actionByEmail,
+        actionWithName,
+        actionWithEmail,
+      ],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+};
+
+splitwisedb.getActivity = (groupID) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * from Activity where idGroup=?`,
       [groupID],
       (err, result) => {
         if (err) {

@@ -37,8 +37,10 @@ const Groups = ({
   useEffect(() => {
     if (isAuthenticated && user) {
       setCSymbol(getSymbolFromCurrency(user[0].userCurrency));
-      getGroupActivity(match.params.id);
+
       if (!acceptedGroups) history.push('/dashboard');
+
+      getGroupActivity(match.params.id);
     }
 
     if (acceptedGroups && acceptedGroups.mygroupList.length > 0) {
@@ -146,7 +148,8 @@ const Groups = ({
 
                 const paidAmount = ele.amount;
                 const lentAmount = roundToTwo(
-                  paidAmount / groupActivity.memCount
+                  (paidAmount / groupActivity.memCount) *
+                    (groupActivity.memCount - 1)
                 );
                 if (ele.paidByEmail === user[0].userEmail) {
                   paid = 'you paid';

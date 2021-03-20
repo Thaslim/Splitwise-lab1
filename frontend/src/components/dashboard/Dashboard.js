@@ -40,7 +40,7 @@ const Dashboard = ({
     }
     if (isAuthenticated && !summary) getDashBoardSummary();
     if (isAuthenticated && loading) getAcceptedGroups();
-    if (summary) {
+    if (acceptedGroups && summary) {
       const getBacks = summary.summary.map((val) => {
         if (Object.values(val)[0] > 0) {
           const memName = findInArray(

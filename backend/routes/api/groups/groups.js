@@ -63,6 +63,16 @@ router.post(
       );
 
       if (expenseAdded.insertId) {
+        const groupName = await splitwisedb.getGroupName(group_id);
+        const activity = await splitwisedb.addActivity(
+          `added ${amount}  to the group`,
+          group_id,
+          groupName[0].groupName,
+          paidBy,
+          paidByEmail,
+          paidBy,
+          paidByEmail
+        );
         const groupMemberIDs = await splitwisedb.getGroupMemberIDs(group_id);
         const numActiveMembers = groupMemberIDs.length;
 

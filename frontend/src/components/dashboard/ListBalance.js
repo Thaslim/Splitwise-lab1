@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
-  <div className='groupMembers'>
+  <div data-testid='listbalance' className='groupMembers'>
     <img src={imgSrc} style={{ float: 'left' }} alt='Avatar' />
 
     <span style={{ fontSize: '0.85rem' }}>
@@ -18,6 +18,7 @@ const ListBalance = ({ cls, name, amount, csymbol, imgSrc, txt }) => (
       >
         {name}
       </strong>
+      &nbsp;
       {txt}
     </span>
     <span className={cls}>

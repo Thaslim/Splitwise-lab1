@@ -30,7 +30,7 @@ const MyGroups = ({
     if (isAuthenticated && user) {
       getAllMyGroups();
     }
-  }, [getAllMyGroups]);
+  }, [getAllMyGroups, allMyGroups]);
 
   return (
     <div className='allmygroups'>

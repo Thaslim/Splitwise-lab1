@@ -18,6 +18,8 @@ import {
   ACCEPT_INVITATION_ERROR,
   REJECT_INVITATION,
   REJECT_INVITATION_ERROR,
+  GET_RECENT_ACTIVITY,
+  GET_RECENT_ACTIVITY_ERROR,
 } from './types';
 
 // Get registered user list
@@ -213,6 +215,25 @@ export const rejectInvitation = (groupID, history) => async (dispatch) => {
     }
     dispatch({
       type: REJECT_INVITATION_ERROR,
+      payload: {
+        msg: error.response.statusText,
+        status: error.response.status,
+      },
+    });
+  }
+};
+
+// Get Recent Activity
+export const getRecentActivity = () => async (dispatch) => {
+  try {
+    const res = await axios.get('api/activity');
+    dispatch({
+      type: GET_RECENT_ACTIVITY,
+      payload: res.data,
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_RECENT_ACTIVITY_ERROR,
       payload: {
         msg: error.response.statusText,
         status: error.response.status,

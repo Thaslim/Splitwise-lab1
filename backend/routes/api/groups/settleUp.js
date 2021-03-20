@@ -12,7 +12,6 @@ const findInArray = (arrObj, id) => {
 // @access Private
 router.post('/', auth, async (req, res) => {
   const { settleWithEmail: settleWithEmail } = req.body;
-  const group_id = req.params.group_id;
   const settledByEmail = req.user.key;
   try {
     //get related balance
@@ -20,20 +19,36 @@ router.post('/', auth, async (req, res) => {
       settledByEmail,
       settleWithEmail
     );
+    const actionByName = await splitwisedb.getUserName(req.user.id);
+    const actionWithName = await splitwisedb.getUserNamebyEmail(
+      settleWithEmail
+    );
     // console.log(getRelatedBalances);
     const stringifyGetRelatedBalances = JSON.stringify(getRelatedBalances);
     const jsonGetRelatedBalances = JSON.parse(stringifyGetRelatedBalances);
     //update related balance
+
     const unresolvedPromises = jsonGetRelatedBalances.map(async (val) => {
+      const groupName = await splitwisedb.getGroupName(val.egID);
+
+      const activity = await splitwisedb.addActivity(
+        `settled up in group ${val.groupID} with ${settleWithEmail}`,
+        val.egID,
+        groupName[0].groupName,
+        actionByName[0].userName,
+        settledByEmail,
+        actionWithName[0].userName,
+        settleWithEmail
+      );
       return await splitwisedb.updateRelatedBalances(val.idSplitExpense);
     });
+
     const updatedRelatedBalance = await Promise.all(unresolvedPromises);
 
     //get paid by balance
     const getpaidbyBalance = await splitwisedb.getPaidByBalances(
       settleWithEmail
     );
-    // console.log(getpaidbyBalance);
 
     const stringifyGetpaidbyBalance = JSON.stringify(getpaidbyBalance);
     const jsonGetpaidbyBalance = JSON.parse(stringifyGetpaidbyBalance);
@@ -47,6 +62,7 @@ router.post('/', auth, async (req, res) => {
         } else {
           settled = 0;
         }
+
         return await splitwisedb.updatePaidByBalances(
           val.idSplitExpense,
           val.balance + findExp.balance,

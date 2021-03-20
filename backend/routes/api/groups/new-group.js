@@ -71,7 +71,7 @@ router.post(
     } else {
       groupPicture = '';
     }
-    console.log(members);
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -103,16 +103,44 @@ router.post(
         req.user.key,
         1
       );
-      const objArray = JSON.parse(members);
-      if (objArray && objArray.length) {
-        const insertMembers = objArray.map(async (x) => {
-          return await splitwisedb.addGroupMembers(
-            currGroupID,
-            x.memberName,
-            x.memberEmail,
-            0
-          );
-        });
+      const primaryAction = 'created group';
+
+      const addActivity = await splitwisedb.addActivity(
+        primaryAction,
+        currGroupID,
+        name,
+        currUserName[0].userName,
+        req.user.key,
+        currUserName[0].userName,
+        req.user.key
+      );
+
+      if (members.length) {
+        // const objArray = JSON.parse(members);
+        const objArray = members;
+        if (objArray && objArray.length) {
+          const action = 'invited';
+          const insertMembers = objArray.map(async (x) => {
+            return await splitwisedb.addGroupMembers(
+              currGroupID,
+              x.memberName,
+              x.memberEmail,
+              0
+            );
+          });
+
+          const memberIDS = objArray.map(async (x) => {
+            return await splitwisedb.addActivity(
+              action,
+              currGroupID,
+              name,
+              currUserName[0].userName,
+              req.user.key,
+              x.memberName,
+              x.memberEmail
+            );
+          });
+        }
       }
 
       res.status(200).json({ message: 'Successfully created group!' });

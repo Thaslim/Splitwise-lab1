@@ -16,6 +16,9 @@ import {
   ACCEPT_INVITATION,
   REJECT_INVITATION,
   REJECT_INVITATION_ERROR,
+  GET_RECENT_ACTIVITY,
+  GET_RECENT_ACTIVITY_ERROR,
+  CLEAR_RECENT_ACTIVITY,
 } from '../actions/types';
 
 const initialState = {
@@ -26,6 +29,7 @@ const initialState = {
   groupInfo: null,
   allMyGroups: null,
   invitation: '',
+  recentactivity: null,
 };
 
 function groupReducer(state = initialState, action) {
@@ -44,6 +48,7 @@ function groupReducer(state = initialState, action) {
     case GET_ALL_MY_GROUPS_ERROR:
     case ACCEPT_INVITATION_ERROR:
     case REJECT_INVITATION_ERROR:
+    case GET_RECENT_ACTIVITY_ERROR:
       return {
         ...state,
         error: payload,
@@ -89,6 +94,17 @@ function groupReducer(state = initialState, action) {
         invitation: 'Rejected',
       };
 
+    case GET_RECENT_ACTIVITY:
+      return {
+        ...state,
+        recentactivity: payload,
+      };
+
+    case CLEAR_RECENT_ACTIVITY:
+      return {
+        ...state,
+        recentactivity: null,
+      };
     default:
       return state;
   }

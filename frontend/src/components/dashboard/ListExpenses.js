@@ -14,7 +14,11 @@ const ListExpenses = ({
 }) => {
   const dt = new Date(date);
   return (
-    <div className='expense' style={{ height: '70%' }}>
+    <div
+      data-testid='listexpense'
+      className='expense'
+      style={{ height: '70%' }}
+    >
       <div className='main-block'>
         <div
           className='date'
@@ -62,12 +66,14 @@ const ListExpenses = ({
           clear: 'none',
         }}
       >
+        &nbsp;
         {paidby}
         <br />
         <span
           className='number'
           style={{ fontSize: '16px', color: '#000', fontWeight: 'bold' }}
         >
+          &nbsp;
           {currency}
           {paidAmount}
         </span>
@@ -82,9 +88,14 @@ const ListExpenses = ({
           width: '100px',
         }}
       >
+        &nbsp;
         {lent}
-
-        <span className={cls} style={{ fontSize: '16px', fontWeight: 'bold' }}>
+        &nbsp;
+        <span
+          data-testid='amount'
+          className={cls}
+          style={{ fontSize: '16px', fontWeight: 'bold' }}
+        >
           {currency}
           {lentAmount}
         </span>

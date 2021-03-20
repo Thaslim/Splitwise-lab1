@@ -10,9 +10,8 @@ const GroupBalanceList = ({ cls, email, amount, csymbol, imgSrc, txt }) => {
     : profilePic;
 
   return (
-    <div className='groupMembers'>
+    <div className='groupMembers' data-testid='groupbalance'>
       <img src={src} style={{ float: 'left' }} alt='Avatar' />
-
       <span style={{ fontSize: '0.85rem', display: 'table' }}>
         <strong
           style={{
@@ -25,9 +24,10 @@ const GroupBalanceList = ({ cls, email, amount, csymbol, imgSrc, txt }) => {
           {email}
         </strong>
       </span>
+
       <span style={{ paddingLeft: '10%', fontSize: '11px' }}>
         {txt}
-        <span className={cls} style={{ fontSize: '14px' }}>
+        <span data-testid='amount' className={cls} style={{ fontSize: '14px' }}>
           {csymbol} {amount}
         </span>
       </span>

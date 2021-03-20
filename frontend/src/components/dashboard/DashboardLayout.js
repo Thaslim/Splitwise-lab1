@@ -20,12 +20,12 @@ const DashboardLayout = ({
   const [accFriends, setAccFriends] = useState([]);
 
   useEffect(() => {
-    if (isAuthenticated && loading) getAcceptedGroups();
+    if (isAuthenticated && !acceptedGroups) getAcceptedGroups();
     if (acceptedGroups) {
       setAccList(acceptedGroups.mygroupList);
       setAccFriends(acceptedGroups.acceptedMembers);
     }
-  }, [getAcceptedGroups, loading, isAuthenticated]);
+  }, [getAcceptedGroups, acceptedGroups, loading, isAuthenticated]);
 
   return loading ? (
     <Spinner />
